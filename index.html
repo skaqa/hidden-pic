@@ -132,34 +132,18 @@
         const randomButton = document.getElementById('randomImageButton');
         const specialButton = document.getElementById('specialImageButton');
         const textOverlay = document.getElementById('text-overlay');
-        const TOTAL_IMAGES = 8;
+        
+        // **REMOVED: const TOTAL_IMAGES = 8;**
+        const MAX_FLASHCARDS = 8; // Use a constant for max image number 
         let currentImageIndex = 0;
         const SPECIAL_IMAGE_PATH = 'images/0.png';
 
-        // === SHUFFLE BAG SYSTEM ===
-        let shuffleBag = [];
-
-        function refillAndShuffleBag() {
-            shuffleBag = [];
-            for (let i = 1; i <= TOTAL_IMAGES; i++) {
-                shuffleBag.push(i);
-            }
-            // Fisher-Yates shuffle
-            for (let i = shuffleBag.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffleBag[i], shuffleBag[j]] = [shuffleBag[j], shuffleBag[i]];
-            }
+        // **REMOVED: SHUFFLE BAG SYSTEM**
+        // Replaced with a simple random number generator
+        function getRandomImageIndex() {
+            // Generates a random integer between 1 and MAX_FLASHCARDS (inclusive)
+            return Math.floor(Math.random() * MAX_FLASHCARDS) + 1;
         }
-
-        function getNextShuffledImage() {
-            if (shuffleBag.length === 0) {
-                refillAndShuffleBag();
-            }
-            return shuffleBag.pop(); // Take from end for efficiency
-        }
-
-        // Initialize the bag on load
-        refillAndShuffleBag();
 
         // === Button Feedback ===
         function setButtonLoading(button, originalText, isLoading) {
@@ -191,7 +175,7 @@
             imageElement.src = newPath;
         }
 
-        // === Random Button with Shuffle Bag ===
+        // === Random Button Modified ===
         randomButton.addEventListener('click', function() {
             if (randomButton.classList.contains('loading')) return;
 
@@ -202,8 +186,8 @@
                 textOverlay.classList.remove('show-text');
                 randomButton.classList.remove('loading');
 
-                // Get next image from shuffle bag
-                const newIndex = getNextShuffledImage();
+                // **MODIFIED: Get next image using Math.random()**
+                const newIndex = getRandomImageIndex();
                 currentImageIndex = newIndex;
                 const newImagePath = `images/${currentImageIndex}.png`;
 
