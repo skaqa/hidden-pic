@@ -151,7 +151,7 @@
             box-shadow: var(--shadow-lg);
             transition: var(--transition);
             border: 8px solid white;
-            background: white;
+            background: #e0e0e0; /* DEBUG: Added light gray background */
             transform-style: preserve-3d;
             perspective: 1000px;
         }
@@ -611,7 +611,6 @@
                 width: 100%;
                 max-width: 300px;
                 font-size: 4rem;
-                padding: 20px;
             }
             .square-block {
                 width: 10px; /* 300px / 30 */
@@ -956,3 +955,322 @@
 
             // Update progress bar
             const progressPercent = (squaresRemoved / TOTAL_SQUARES) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+        }
+
+        function removeSquaresGradually() {
+            const grid = document.getElementById('square-grid');
+            if (!grid) return;
+
+            // Get all squares that are currently visible
+            let visibleSquares = Array.from(grid.querySelectorAll('.square-block')).filter(
+                square => square.style.opacity !== '0'
+            );
+
+            if (visibleSquares.length === 0) {
+                clearInterval(squareRemovalInterval);
+                squareRemovalInterval = null;
+                showNotification("Picture fully revealed! Great job!");
+                return;
+            }
+
+            visibleSquares.sort(() => Math.random() - 0.5);
+
+            const squaresToRemove = Math.min(SQUARES_PER_SECOND, visibleSquares.length);
+
+            for (let i = 0; i < squaresToRemove; i++) {
+                if (visibleSquares[i]) {
+                    visibleSquares[i].classList.add('removing');
+
+                    setTimeout(() => {
+                        visibleSquares[i].style.opacity = '0';
+                        visibleSquares[i].classList.remove('removing');
+                    }, 300);
+
+                    remainingSquares--;
+                    squaresRemoved++;
+                }
+            }
+
+            updateSquareCounter();
+        }
+
+        function startSquareRemovalInterval() {
+            // Reset counters
+            remainingSquares = TOTAL_SQUARES;
+            squaresRemoved = 0;
+            updateSquareCounter();
+
+            // Show progress bar
+            progressContainer.style.display = 'block';
+
+            // Update clock status with helper
+            updateClockStatus('Revealing picture...', 'fa-eye');
+
+            // Clear any existing interval before starting a new one
+            if (squareRemovalInterval) {
+                clearInterval(squareRemovalInterval);
+            }
+
+            squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
+        }
+
+        // NEW FUNCTION: Covers the image and prepares the timer (used by Random Button)
+        function coverAndResetSquares() {
+            if (squareRemovalInterval) {
+                clearInterval(squareRemovalInterval);
+                squareRemovalInterval = null;
+            }
+
+            progressContainer.style.display = 'none';
+
+            const grid = document.getElementById('square-grid');
+            if (grid) {
+                Array.from(grid.querySelectorAll('.square-block')).forEach(square => {
+                    square.style.opacity = '1'; // FULLY COVER
+                    square.classList.remove('removing');
+                });
+
+                remainingSquares = TOTAL_SQUARES;
+                squaresRemoved = 0;
+                updateSquareCounter();
+            }
+        }
+
+        // NEW FUNCTION: Reveals the image and stops the timer (used by Special Button & Initial Load)
+        function revealAndStopSquares() {
+            if (squareRemovalInterval) {
+                clearInterval(squareRemovalInterval);
+                squareRemovalInterval = null;
+            }
+
+            progressContainer.style.display = 'none';
+
+            const grid = document.getElementById('square-grid');
+            if (grid) {
+                Array.from(grid.querySelectorAll('.square-block')).forEach(square => {
+                    square.style.opacity = '0'; // FULLY REVEAL
+                    square.classList.remove('removing');
+                });
+
+                remainingSquares = 0;
+                squaresRemoved = TOTAL_SQUARES;
+                updateSquareCounter();
+            }
+        }
+        // END SQUARE GRID FUNCTIONS
+
+
+        // === WORD & IMAGE SHUFFLE BAGS (Skipping for brevity, no changes needed) ===
+        const VOCAB_WORDS = ["you", "you(2 or more)", "he", "she", "it", "they"];
+        let wordShuffleBag = [];
+
+        function refillAndShuffleWordBag() {
+            wordShuffleBag = [...VOCAB_WORDS];
+            for (let i = wordShuffleBag.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [wordShuffleBag[i], wordShuffleBag[j]] = [wordShuffleBag[j], wordShuffleBag[i]];
+            }
+        }
+
+        function getNextShuffledWord() {
+            if (wordShuffleBag.length === 0) {
+                refillAndShuffleWordBag();
+            }
+            return wordShuffleBag.pop();
+        }
+
+        let shuffleBag = [];
+
+        function refillAndShuffleBag() {
+            shuffleBag = [];
+            for (let i = 1; i <= TOTAL_IMAGES; i++) {
+                shuffleBag.push(i);
+            }
+            for (let i = shuffleBag.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffleBag[i], shuffleBag[j]] = [shuffleBag[j], shuffleBag[i]];
+            }
+        }
+
+        function getNextShuffledImage() {
+            if (shuffleBag.length === 0) {
+                refillAndShuffleBag();
+                showNotification("Shuffling images... New set loaded!");
+            }
+            return shuffleBag.pop();
+        }
+
+        refillAndShuffleWordBag();
+        refillAndShuffleBag();
+
+        // === Image UI Management (UPDATED for Initial Reveal) ===
+
+        function createInitialImageSlot() {
+            const count = 1;
+            imagesWrapper.className = `images-wrapper-${count}`;
+            currentImageIndices = Array(count).fill(0);
+
+            const container = document.createElement('div');
+            container.className = 'image-container';
+
+            const img = document.createElement('img');
+            img.id = `myImage_0`;
+            img.className = 'flashcard-image';
+            img.src = SPECIAL_IMAGE_PATH;
+            img.alt = `Vocabulary flashcard 1`;
+            img.decoding = 'async';
+
+            const overlay = document.createElement('div');
+            overlay.id = `overlay_0`;
+            overlay.className = 'image-overlay-text';
+            overlay.textContent = "WORD";
+
+            const squareGrid = createSquareGrid();
+
+            img.addEventListener('load', handleImageLoad);
+            img.addEventListener('error', handleImageLoad);
+
+            container.appendChild(img);
+            container.appendChild(squareGrid);
+            container.appendChild(overlay);
+            imagesWrapper.appendChild(container);
+
+            progressContainer.style.display = 'none';
+        }
+
+        // Initial setup
+        createInitialImageSlot();
+        updateClock(READY_CLOCK_TIME);
+        revealAndStopSquares(); // *** FIX: REVEAL THE IMAGE ON LOAD ***
+
+
+        // === Button Feedback and Handlers (Skipping for brevity) ===
+
+        function setButtonLoading(button, isLoading) {
+            if (isLoading) {
+                button.classList.add('loading');
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Loading...</span>';
+            } else {
+                button.classList.remove('loading');
+                if (button.id === 'randomImageButton') {
+                    button.innerHTML = RANDOM_BUTTON_CONTENT;
+                } else if (button.id === 'specialImageButton') {
+                    button.innerHTML = SPECIAL_BUTTON_CONTENT;
+                }
+            }
+        }
+
+        function handleImageLoad(event) {
+            const img = event.target;
+            img.classList.remove('image-loading');
+
+            const allImagesLoaded = Array.from(imagesWrapper.querySelectorAll('.flashcard-image')).every(
+                img => !img.classList.contains('image-loading')
+            );
+
+            if (allImagesLoaded && randomButton.classList.contains('loading')) {
+                setButtonLoading(randomButton, false);
+            } else if (allImagesLoaded && specialButton.classList.contains('loading')) {
+                setButtonLoading(specialButton, false);
+            }
+        }
+
+        function changeImage(imgElement, newPath) {
+            imgElement.classList.add('image-loading');
+            imgElement.src = newPath;
+        }
+
+        // === Random Button Logic (CORRECTED) ===
+        randomButton.addEventListener('click', function() {
+            if (randomButton.classList.contains('loading')) return;
+
+            setButtonLoading(randomButton, true);
+            coverAndResetSquares(); // Cover the image for the challenge
+
+            const newClockTime = getRandomClockTime();
+            const imageElements = imagesWrapper.querySelectorAll('.flashcard-image');
+            const overlays = imagesWrapper.querySelectorAll('.image-overlay-text');
+            const textDisplayDuration = 1000;
+
+            isPaused = false;
+            isChallengeActive = true;
+            pauseContinueButton.style.display = 'flex'; // Make the button visible
+            pauseContinueButton.innerHTML = PAUSE_CONTENT; // Ensure it says 'Pause'
+
+            // --- STEP 1: PREPARE AND SHOW TEXT/CLOCK ---
+            updateClock(newClockTime);
+
+            // Prepare next set of images
+            currentImageIndices = [];
+            imageElements.forEach(() => {
+                currentImageIndices.push(getNextShuffledImage());
+            });
+
+            // Reveal the word overlay
+            overlays.forEach((overlay) => {
+                const shuffledWord = getNextShuffledWord();
+                overlay.textContent = shuffledWord;
+                overlay.classList.add('show-text'); // TEXT SHOWS
+            });
+
+            showNotification(`Match "${overlays[0].textContent}" with ${newClockTime}`, 2000);
+
+            // --- STEP 2: TIMEOUT FOR IMAGE LOAD START ---
+            setTimeout(() => {
+                // Hide the word overlay
+                overlays.forEach(overlay => {
+                    overlay.classList.remove('show-text'); // TEXT HIDES
+                });
+
+                // Start image loading (this is asynchronous) and square removal
+                startSquareRemovalInterval();
+
+                imageElements.forEach((img, index) => {
+                    const newIndex = currentImageIndices[index];
+                    const newImagePath = `images/${newIndex}.png`;
+                    changeImage(img, newImagePath); // Triggers load and later handleImageLoad
+                });
+
+            }, textDisplayDuration);
+        });
+
+        // === Special Button (Back to Ready) Logic (CORRECTED) ===
+        specialButton.addEventListener('click', function() {
+            // Check if we are already showing the special image (index 0)
+            const isReadyState = currentImageIndices.length === 1 && currentImageIndices[0] === 0;
+            if (isReadyState) {
+                showNotification("Already in ready state!");
+                return;
+            }
+
+            setButtonLoading(specialButton, true);
+
+            updateClock(READY_CLOCK_TIME);
+            revealAndStopSquares(); // FULLY REVEAL the image for the ready state
+
+            // --- NEW/ADJUSTED CODE FOR PAUSE STATE RESET ---
+            isChallengeActive = false; // End the challenge state
+            isPaused = false; // Reset pause state
+            pauseContinueButton.style.display = 'none'; // Hide the button
+            // ---------------------------------------------
+
+            imagesWrapper.querySelectorAll('.image-overlay-text').forEach(overlay => {
+                overlay.classList.remove('show-text');
+            });
+
+            const imageElements = imagesWrapper.querySelectorAll('.flashcard-image');
+            imageElements.forEach((img) => {
+                // Force all images to index 0 (the special image)
+                // Note: For a single image, this is fine. For multiple, you'd reset the array.
+                changeImage(img, SPECIAL_IMAGE_PATH);
+            });
+
+            // Manually set the state back to ready (index 0)
+            currentImageIndices = [0];
+
+            showNotification("Reset to ready state!");
+        });
+    </script>
+</body>
+</html>
