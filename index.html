@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentences with Time | Interactive Flashcards</title>
+    <title>U-Z Challenge | Interactive Flashcards</title>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
@@ -127,7 +127,7 @@
             line-height: 1.5;
         }
 
-        /* NEW: Wrapper for Image and Clock */
+        /* Wrapper for Image and Clock */
         #content-wrapper {
             display: flex;
             align-items: center;
@@ -135,14 +135,12 @@
             gap: 40px;
             width: 100%;
             margin-bottom: 20px;
-            flex-wrap: wrap; /* Allows wrapping on smaller screens */
+            flex-wrap: wrap; 
         }
 
         /* Images Wrapper */
         #images-wrapper {
             display: flex;
-            /* gap: 25px; - Already handled by #content-wrapper */
-            /* margin: 30px 0; - Already handled by #content-wrapper */
             flex-wrap: wrap;
             justify-content: center;
             transition: var(--transition);
@@ -176,7 +174,29 @@
             width: 450px;
             height: 450px;
         }
-        
+
+        /* NEW: Square Grid Container (positioned absolutely over the image) */
+        .square-grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            z-index: 999; /* Below text overlay (1000), above image */
+            pointer-events: none;
+        }
+
+        /* NEW: Single Square Block */
+        .square-block {
+            width: 15px; /* 450px / 30 = 15px per side */
+            height: 15px;
+            background-color: var(--primary-dark); /* Dark color to block the image */
+            transition: opacity 0.1s ease-out; /* Smooth removal effect */
+            opacity: 1;
+        }
+
         /* Overlay text */
         .image-overlay-text {
             position: absolute;
@@ -189,7 +209,7 @@
             justify-content: center;
             z-index: 1000;
             font-family: 'Nunito', sans-serif;
-            font-size: 3.5rem; /* MODIFIED: Reduced from 4.5rem */
+            font-size: 3.5rem; 
             font-weight: 900;
             color: white;
             background: linear-gradient(135deg, rgba(67, 97, 238, 0.9), rgba(114, 9, 183, 0.9));
@@ -208,10 +228,10 @@
             opacity: 0.5;
         }
 
-        /* NEW: Digital Clock Styles */
+        /* Digital Clock Styles */
         #digital-clock {
             background: var(--primary-dark);
-            color: #00ff00; /* Classic digital green */
+            color: #00ff00; 
             font-family: 'Orbitron', sans-serif;
             padding: 30px;
             border-radius: var(--radius-md);
@@ -227,7 +247,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 450px; /* Match image height for good alignment */
+            height: 450px;
         }
         
         .time-label {
@@ -249,8 +269,108 @@
             width: 100%;
         }
 
-        /* ... (Rest of the CSS is the same as the previous response) ... */
-        /* ... (Skipping for brevity, assume the rest is included) ... */
+        .action-button {
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-width: 220px;
+            box-shadow: var(--shadow-md);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .action-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: width 0.4s ease;
+            z-index: -1;
+        }
+
+        .action-button:hover:before {
+            width: 100%;
+        }
+
+        .action-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-button:active {
+            transform: translateY(-2px);
+        }
+
+        #randomImageButton {
+            background: linear-gradient(135deg, var(--primary-blue), #3a0ca3);
+            color: white;
+        }
+
+        #randomImageButton:hover {
+            background: linear-gradient(135deg, #3a56e4, #2d0a8a);
+        }
+
+        #specialImageButton {
+            background: linear-gradient(135deg, var(--primary-green), #2a9d8f);
+            color: white;
+        }
+
+        #specialImageButton:hover {
+            background: linear-gradient(135deg, #3accef, #21867a);
+        }
+
+        .loading {
+            background: linear-gradient(135deg, #ffb347, #ffcc33) !important;
+            cursor: wait !important;
+            pointer-events: none;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .stat-item i {
+            color: var(--primary-blue);
+        }
 
         /* Responsive Design */
         @media (max-width: 1200px) {
@@ -260,6 +380,10 @@
             }
             #digital-clock {
                 height: 400px;
+            }
+            .square-block {
+                width: 13.33px; /* 400px / 30 */
+                height: 13.33px;
             }
         }
 
@@ -280,11 +404,15 @@
                 height: 350px;
                 font-size: 4rem;
             }
+            .square-block {
+                width: 11.66px; /* 350px / 30 */
+                height: 11.66px;
+            }
         }
 
         @media (max-width: 768px) {
             #content-wrapper {
-                flex-direction: column; /* Stack image and clock vertically */
+                flex-direction: column; 
                 gap: 30px;
             }
             
@@ -312,11 +440,15 @@
             }
             
             #digital-clock {
-                height: auto; /* Allow auto height when stacked */
+                height: auto; 
                 width: 100%;
                 max-width: 300px;
                 font-size: 4rem;
                 padding: 20px;
+            }
+            .square-block {
+                width: 10px; /* 300px / 30 */
+                height: 10px;
             }
         }
 
@@ -350,6 +482,7 @@
                 max-width: 260px;
                 font-size: 3rem;
             }
+            /* Note: Square blocks will be smaller than 10px here, which is fine */
         }
 
         /* Animation for initial load */
@@ -375,16 +508,15 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Sentences with Timee</h1>
+            <h1>U-Z Challenge</h1>
             <p class="subtitle">Interactive flashcards for learning vocabulary.</p>
         </div>
 
         <div id="content-wrapper">
             <div id="images-wrapper" class="images-wrapper-1">
-                <!-- Images and Overlays will be dynamically inserted here -->
+                <!-- Image Container with Square Grid will be dynamically created here -->
             </div>
             
-            <!-- NEW: Digital Clock Element -->
             <div id="digital-clock">
                 <span id="clock-display">00:00</span>
                 <span class="time-label">Ready</span>
@@ -421,27 +553,27 @@
         const imagesWrapper = document.getElementById('images-wrapper');
         const randomButton = document.getElementById('randomImageButton');
         const specialButton = document.getElementById('specialImageButton');
-        const clockDisplay = document.getElementById('clock-display'); // NEW
-        const clockLabel = document.querySelector('#digital-clock .time-label'); // NEW
+        const clockDisplay = document.getElementById('clock-display');
+        const clockLabel = document.querySelector('#digital-clock .time-label');
 
         const TOTAL_IMAGES = 12;
         const SPECIAL_IMAGE_PATH = 'images/0.png';
         
-        // Define constants for the original button content
         const RANDOM_BUTTON_CONTENT = '<i class="fas fa-random"></i><span>Show Random Images</span>'; 
         const SPECIAL_BUTTON_CONTENT = '<i class="fas fa-home"></i><span>Back To Ready</span>';       
 
         let currentImageIndices = [];
-        const READY_CLOCK_TIME = "00:00"; // Time when ready
+        const READY_CLOCK_TIME = "00:00";
+        let intervalId = null; // To hold the ID of the square removal interval
+        const TOTAL_SQUARES = 900; // 30x30
+        const SQUARES_PER_SECOND = 15;
 
-        // === CLOCK FUNCTIONS (NEW) ===
+
+        // === CLOCK FUNCTIONS ===
         function getRandomClockTime() {
-            // Hours 1 to 12
             const randomHour = Math.floor(Math.random() * 12) + 1;
-            // Minutes 00 or 30
-            const randomMinute = Math.random() < 0.5 ? 0 : 30; // 50% chance for 00 or 30
+            const randomMinute = Math.random() < 0.5 ? 0 : 30;
             
-            // Format hour to 2 digits (e.g., 01, 10) - Use 12-hour format for simplicity
             const formattedHour = String(randomHour).padStart(2, '0');
             const formattedMinute = String(randomMinute).padStart(2, '0');
             
@@ -453,26 +585,97 @@
             if (timeString === READY_CLOCK_TIME) {
                 clockLabel.textContent = "Ready";
             } else {
-                // Determine if it's "o'clock" or "thirty" for the label
                 const minute = timeString.split(':')[1];
                 if (minute === '00') {
                     clockLabel.textContent = "o'clock";
                 } else if (minute === '30') {
                     clockLabel.textContent = "thirty";
                 } else {
-                    clockLabel.textContent = ""; // Fallback
+                    clockLabel.textContent = ""; 
                 }
             }
         }
         // END CLOCK FUNCTIONS
 
-        // === WORD SHUFFLE BAG SYSTEM ===
+
+        // === SQUARE GRID FUNCTIONS (NEW) ===
+        function createSquareGrid() {
+            const gridContainer = document.createElement('div');
+            gridContainer.className = 'square-grid-overlay';
+            gridContainer.id = 'square-grid';
+            
+            for (let i = 0; i < TOTAL_SQUARES; i++) {
+                const square = document.createElement('div');
+                square.className = 'square-block';
+                gridContainer.appendChild(square);
+            }
+            return gridContainer;
+        }
+        
+        function removeSquaresGradually() {
+            const grid = document.getElementById('square-grid');
+            if (!grid) return;
+            
+            // Get all squares that are currently visible (opacity 1)
+            let visibleSquares = Array.from(grid.querySelectorAll('.square-block')).filter(
+                square => square.style.opacity !== '0'
+            );
+            
+            // If the array is empty, clear the interval
+            if (visibleSquares.length === 0) {
+                clearInterval(intervalId);
+                intervalId = null;
+                return;
+            }
+            
+            // Shuffle the visible squares to ensure random removal
+            visibleSquares.sort(() => Math.random() - 0.5);
+            
+            // Determine how many to remove (min of SQUARES_PER_SECOND or remaining squares)
+            const squaresToRemove = Math.min(SQUARES_PER_SECOND, visibleSquares.length);
+            
+            // Remove the first 'squaresToRemove' from the shuffled list
+            for (let i = 0; i < squaresToRemove; i++) {
+                if (visibleSquares[i]) {
+                    visibleSquares[i].style.opacity = '0'; // Use opacity for smooth transition
+                }
+            }
+        }
+        
+        function startSquareRemovalInterval() {
+            // Clear any existing interval before starting a new one
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+            
+            // Start the interval: remove SQUARES_PER_SECOND every 1000ms (1 second)
+            intervalId = setInterval(removeSquaresGradually, 1000);
+        }
+        
+        function resetSquareGrid() {
+            // Stop the removal interval
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            
+            // Set all squares to visible again
+            const grid = document.getElementById('square-grid');
+            if (grid) {
+                Array.from(grid.querySelectorAll('.square-block')).forEach(square => {
+                    square.style.opacity = '1';
+                });
+            }
+        }
+        // END SQUARE GRID FUNCTIONS
+
+
+        // === WORD & IMAGE SHUFFLE BAGS (Same as previous) ===
         const VOCAB_WORDS = ["you", "you(2 or more)", "he", "she", "it", "they"];
         let wordShuffleBag = [];
 
         function refillAndShuffleWordBag() {
             wordShuffleBag = [...VOCAB_WORDS];
-            // Fisher-Yates shuffle
             for (let i = wordShuffleBag.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [wordShuffleBag[i], wordShuffleBag[j]] = [wordShuffleBag[j], wordShuffleBag[i]];
@@ -486,10 +689,6 @@
             return wordShuffleBag.pop();
         }
         
-        // Initialize the word bag on load
-        refillAndShuffleWordBag();
-        
-        // === IMAGE SHUFFLE BAG SYSTEM ===
         let shuffleBag = [];
 
         function refillAndShuffleBag() {
@@ -497,7 +696,6 @@
             for (let i = 1; i <= TOTAL_IMAGES; i++) {
                 shuffleBag.push(i);
             }
-            // Fisher-Yates shuffle
             for (let i = shuffleBag.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffleBag[i], shuffleBag[j]] = [shuffleBag[j], shuffleBag[i]];
@@ -510,11 +708,11 @@
             }
             return shuffleBag.pop();
         }
-
-        // Initialize the image bag on load
+        
+        refillAndShuffleWordBag();
         refillAndShuffleBag();
 
-        // === Image UI Management ===
+        // === Image UI Management (UPDATED to include Grid) ===
 
         function createInitialImageSlot() {
             const count = 1;
@@ -536,17 +734,22 @@
             overlay.className = 'image-overlay-text';
             overlay.textContent = "WORD";
 
+            // NEW: Create and append the square grid overlay
+            const squareGrid = createSquareGrid();
+
             img.addEventListener('load', handleImageLoad);
             img.addEventListener('error', handleImageLoad); 
 
             container.appendChild(img);
-            container.appendChild(overlay);
+            container.appendChild(squareGrid); // Square Grid is below the text overlay (z-index 999)
+            container.appendChild(overlay); 
             imagesWrapper.appendChild(container);
         }
         
-        // Initial creation of 1 image slot AND clock update
+        // Initial setup
         createInitialImageSlot();
-        updateClock(READY_CLOCK_TIME); // Initial clock state
+        updateClock(READY_CLOCK_TIME); 
+
 
         // === Button Feedback and Handlers (Simplified) ===
 
@@ -585,25 +788,24 @@
             imgElement.src = newPath;
         }
 
-        // === Random Button Logic (UPDATED TO CHANGE CLOCK TIME) ===
+        // === Random Button Logic (UPDATED FOR SQUARES) ===
         randomButton.addEventListener('click', function() {
             if (randomButton.classList.contains('loading')) return;
 
             setButtonLoading(randomButton, true);
-            
-            const newClockTime = getRandomClockTime(); // GENERATE NEW TIME HERE
+            resetSquareGrid(); // Ensure squares are visible/reset
+
+            const newClockTime = getRandomClockTime();
             
             const imageElements = imagesWrapper.querySelectorAll('.flashcard-image');
             const overlays = imagesWrapper.querySelectorAll('.image-overlay-text');
             const textDisplayDuration = 1000;
 
-            // 1. Prepare/Pre-load (but don't display) the next set of images/indices
             currentImageIndices = [];
             imageElements.forEach(() => {
                 currentImageIndices.push(getNextShuffledImage());
             });
 
-            // Hide all overlays initially
             overlays.forEach(overlay => {
                 overlay.classList.remove('show-text');
             });
@@ -611,24 +813,27 @@
             setTimeout(() => {
                 // --- STEP 2: TEXT APPEARS & CLOCK IS UPDATED ---
                 
-                updateClock(newClockTime); // UPDATE THE CLOCK DISPLAY
+                updateClock(newClockTime);
                 
                 overlays.forEach((overlay, index) => {
                     const shuffledWord = getNextShuffledWord();
                     overlay.textContent = shuffledWord; 
-                    overlay.classList.add('show-text');
+                    overlay.classList.add('show-text'); // TEXT SHOWS
                 });
                 
                 specialButton.innerHTML = SPECIAL_BUTTON_CONTENT;
                 
                 // 2. Set a second timeout to make the text disappear AND load images
                 setTimeout(() => {
-                    // --- STEP 3: TEXT DISAPPEARS & IMAGE LOAD STARTS ---
+                    // --- STEP 3: TEXT DISAPPEARS, IMAGE LOAD STARTS, AND SQUARE REMOVAL STARTS ---
                     overlays.forEach(overlay => {
-                        overlay.classList.remove('show-text');
+                        overlay.classList.remove('show-text'); // TEXT HIDES
                     });
                     
-                    // Load images immediately after text disappears
+                    // Start the square removal interval AFTER the text disappears
+                    startSquareRemovalInterval();
+
+                    // Load images immediately
                     imageElements.forEach((img, index) => {
                         const newIndex = currentImageIndices[index];
                         const newImagePath = `images/${newIndex}.png`;
@@ -640,15 +845,15 @@
             }, 300);
         });
 
-        // === Special Button (Back to Ready) Logic (UPDATED TO RESET CLOCK) ===
+        // === Special Button (Back to Ready) Logic (UPDATED TO RESET SQUARES) ===
         specialButton.addEventListener('click', function() {
             if (currentImageIndices.every(index => index === 0)) return;
 
             setButtonLoading(specialButton, true);
             
-            updateClock(READY_CLOCK_TIME); // RESET THE CLOCK DISPLAY
+            updateClock(READY_CLOCK_TIME);
+            resetSquareGrid(); // RESET THE SQUARES TO FULL COVERAGE
 
-            // Hide all overlays instantly
             imagesWrapper.querySelectorAll('.image-overlay-text').forEach(overlay => {
                 overlay.classList.remove('show-text');
             });
