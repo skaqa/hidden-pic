@@ -676,7 +676,6 @@
 
         let currentImageIndices = [];
         const READY_CLOCK_TIME = "00:00";
-        let intervalId = null; // To hold the ID of the square removal interval
         let squareRemovalInterval = null; // For the continuous removal
         const TOTAL_SQUARES = 900; // 30x30
         const SQUARES_PER_SECOND = 15;
@@ -708,7 +707,6 @@
         function updateClock(timeString) {
             clockDisplay.textContent = timeString;
             
-            // Add pulse animation when time changes
             clockDisplay.style.animation = 'none';
             setTimeout(() => {
                 clockDisplay.style.animation = 'pulse 1s ease';
@@ -730,7 +728,7 @@
         // END CLOCK FUNCTIONS
 
 
-        // === SQUARE GRID FUNCTIONS (ENHANCED) ===
+        // === SQUARE GRID FUNCTIONS (REFACTORED FOR COVER/REVEAL) ===
         function createSquareGrid() {
             const gridContainer = document.createElement('div');
             gridContainer.className = 'square-grid-overlay';
@@ -770,10 +768,9 @@
             
             // Get all squares that are currently visible
             let visibleSquares = Array.from(grid.querySelectorAll('.square-block')).filter(
-                square => !square.classList.contains('removing') && square.style.opacity !== '0'
+                square => square.style.opacity !== '0'
             );
             
-            // If the array is empty, clear the interval and show completion message
             if (visibleSquares.length === 0) {
                 clearInterval(squareRemovalInterval);
                 squareRemovalInterval = null;
@@ -781,18 +778,14 @@
                 return;
             }
             
-            // Shuffle the visible squares
             visibleSquares.sort(() => Math.random() - 0.5);
             
-            // Determine how many to remove
             const squaresToRemove = Math.min(SQUARES_PER_SECOND, visibleSquares.length);
             
-            // Remove the squares with animation
             for (let i = 0; i < squaresToRemove; i++) {
                 if (visibleSquares[i]) {
                     visibleSquares[i].classList.add('removing');
                     
-                    // After animation completes, set opacity to 0
                     setTimeout(() => {
                         visibleSquares[i].style.opacity = '0';
                         visibleSquares[i].classList.remove('removing');
@@ -820,40 +813,58 @@
                 clearInterval(squareRemovalInterval);
             }
             
-            // Start the interval: remove SQUARES_PER_SECOND every 1000ms (1 second)
             squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
             
             showNotification("Squares are being removed! Watch the picture appear.");
         }
         
-        function resetSquareGrid() {
-            // Stop the removal interval
+        // NEW FUNCTION: Covers the image and prepares the timer (used by Random Button)
+        function coverAndResetSquares() {
             if (squareRemovalInterval) {
                 clearInterval(squareRemovalInterval);
                 squareRemovalInterval = null;
             }
             
-            // Hide progress bar
             progressContainer.style.display = 'none';
             
-            // Reset all squares to visible
             const grid = document.getElementById('square-grid');
             if (grid) {
                 Array.from(grid.querySelectorAll('.square-block')).forEach(square => {
-                    square.style.opacity = '1';
+                    square.style.opacity = '1'; // FULLY COVER
                     square.classList.remove('removing');
                 });
                 
-                // Reset counters
                 remainingSquares = TOTAL_SQUARES;
                 squaresRemoved = 0;
+                updateSquareCounter();
+            }
+        }
+        
+        // NEW FUNCTION: Reveals the image and stops the timer (used by Special Button & Initial Load)
+        function revealAndStopSquares() {
+            if (squareRemovalInterval) {
+                clearInterval(squareRemovalInterval);
+                squareRemovalInterval = null;
+            }
+            
+            progressContainer.style.display = 'none';
+            
+            const grid = document.getElementById('square-grid');
+            if (grid) {
+                Array.from(grid.querySelectorAll('.square-block')).forEach(square => {
+                    square.style.opacity = '0'; // FULLY REVEAL
+                    square.classList.remove('removing');
+                });
+                
+                remainingSquares = 0;
+                squaresRemoved = TOTAL_SQUARES;
                 updateSquareCounter();
             }
         }
         // END SQUARE GRID FUNCTIONS
 
 
-        // === WORD & IMAGE SHUFFLE BAGS ===
+        // === WORD & IMAGE SHUFFLE BAGS (Skipping for brevity, no changes needed) ===
         const VOCAB_WORDS = ["you", "you(2 or more)", "he", "she", "it", "they"];
         let wordShuffleBag = [];
 
@@ -896,7 +907,7 @@
         refillAndShuffleWordBag();
         refillAndShuffleBag();
 
-        // === Image UI Management ===
+        // === Image UI Management (UPDATED for Initial Reveal) ===
 
         function createInitialImageSlot() {
             const count = 1;
@@ -918,7 +929,6 @@
             overlay.className = 'image-overlay-text';
             overlay.textContent = "WORD";
 
-            // Create and append the square grid overlay
             const squareGrid = createSquareGrid();
 
             img.addEventListener('load', handleImageLoad);
@@ -929,16 +939,16 @@
             container.appendChild(overlay); 
             imagesWrapper.appendChild(container);
             
-            // Hide progress bar initially
             progressContainer.style.display = 'none';
         }
         
         // Initial setup
         createInitialImageSlot();
         updateClock(READY_CLOCK_TIME); 
+        revealAndStopSquares(); // *** FIX: REVEAL THE IMAGE ON LOAD ***
 
 
-        // === Button Feedback and Handlers ===
+        // === Button Feedback and Handlers (Skipping for brevity) ===
 
         function setButtonLoading(button, isLoading) {
             if (isLoading) {
@@ -979,7 +989,7 @@
             if (randomButton.classList.contains('loading')) return;
 
             setButtonLoading(randomButton, true);
-            resetSquareGrid(); // Ensure squares are visible/reset
+            coverAndResetSquares(); // *** FIX: COVER THE IMAGE FOR CHALLENGE ***
 
             const newClockTime = getRandomClockTime();
             
@@ -1009,7 +1019,6 @@
                 
                 specialButton.innerHTML = SPECIAL_BUTTON_CONTENT;
                 
-                // Show notification about the challenge
                 showNotification(`Match "${overlays[0].textContent}" with ${newClockTime}`, 2000);
                 
                 // 2. Set a second timeout to make the text disappear AND load images
@@ -1019,10 +1028,8 @@
                         overlay.classList.remove('show-text'); // TEXT HIDES
                     });
                     
-                    // Start the square removal interval AFTER the text disappears
                     startSquareRemovalInterval();
 
-                    // Load images immediately
                     imageElements.forEach((img, index) => {
                         const newIndex = currentImageIndices[index];
                         const newImagePath = `images/${newIndex}.png`;
@@ -1044,7 +1051,7 @@
             setButtonLoading(specialButton, true);
             
             updateClock(READY_CLOCK_TIME);
-            resetSquareGrid(); // RESET THE SQUARES TO FULL COVERAGE
+            revealAndStopSquares(); // *** FIX: REVEAL THE IMAGE FOR READY STATE ***
 
             imagesWrapper.querySelectorAll('.image-overlay-text').forEach(overlay => {
                 overlay.classList.remove('show-text');
@@ -1062,4 +1069,12 @@
         // Add hover effects
         document.querySelector('.container').addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-5px)';
-            this.style.transition = 'transform 0.3s ease
+            this.style.transition = 'transform 0.3s ease';
+        });
+
+        document.querySelector('.container').addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    </script>
+</body>
+</html>
