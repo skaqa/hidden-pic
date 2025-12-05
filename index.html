@@ -461,6 +461,15 @@
             background: linear-gradient(135deg, #3a56e4, #2d0a8a);
         }
 
+        #pauseContinueButton {
+            background: linear-gradient(135deg, #ffc300, #ff8c00); /* Orange/Yellow theme */
+            color: var(--primary-dark);
+        }
+
+        #pauseContinueButton:hover {
+            background: linear-gradient(135deg, #ffdb58, #ff9f00);
+        }
+
         #specialImageButton {
             background: linear-gradient(135deg, var(--primary-green), #2a9d8f);
             color: white;
@@ -751,6 +760,10 @@
                 <i class="fas fa-random"></i>
                 <span>Show Random Images</span>
             </button>
+            <button id="pauseContinueButton" class="action-button" style="display: none;">
+                <i class="fas fa-pause"></i>
+                <span>Pause</span>
+            </button>
             <button id="specialImageButton" class="action-button">
                 <i class="fas fa-home"></i>
                 <span>Back To Ready</span>
@@ -780,6 +793,7 @@
         const imagesWrapper = document.getElementById('images-wrapper');
         const randomButton = document.getElementById('randomImageButton');
         const specialButton = document.getElementById('specialImageButton');
+        const pauseContinueButton = document.getElementById('pauseContinueButton');
         const clockDisplay = document.getElementById('clock-display');
         const timeLabel = document.getElementById('time-label'); 
         const clockStatus = document.getElementById('clock-status');
@@ -792,7 +806,9 @@
         const SPECIAL_IMAGE_PATH = 'images/0.png';
         
         const RANDOM_BUTTON_CONTENT = '<i class="fas fa-random"></i><span>Show Random Images</span>'; 
-        const SPECIAL_BUTTON_CONTENT = '<i class="fas fa-home"></i><span>Back To Ready</span>';       
+        const SPECIAL_BUTTON_CONTENT = '<i class="fas fa-home"></i><span>Back To Ready</span>';     
+        const PAUSE_CONTENT = '<i class="fas fa-pause"></i><span>Pause</span>';
+        const CONTINUE_CONTENT = '<i class="fas fa-play"></i><span>Continue</span>';
 
         let currentImageIndices = [];
         const READY_CLOCK_TIME = "00:00";
@@ -801,7 +817,84 @@
         const SQUARES_PER_SECOND = 15;
         let remainingSquares = TOTAL_SQUARES;
         let squaresRemoved = 0;
+        let isPaused = false; 
+        let isChallengeActive = false;
 
+        // === PAUSE/CONTINUE LOGIC ===
+
+function setPauseState(shouldPause) {
+    if (!isChallengeActive) return; // Only pause if a challenge is running
+    
+    isPaused = shouldPause;
+    
+    if (isPaused) {
+        // Pause: Clear the interval, update button, show notification
+        clearInterval(squareRemovalInterval);
+        squareRemovalInterval = null;
+        
+        pauseContinueButton.innerHTML = CONTINUE_CONTENT;
+        updateClockStatus('Challenge paused', 'fa-pause-circle');
+        showNotification("Challenge Paused. Click 'Continue' to resume.");
+        
+    } else {
+        // Continue: Restart the interval, update button, show notification
+        squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
+        
+        pauseContinueButton.innerHTML = PAUSE_CONTENT;
+        updateClockStatus('Revealing picture...', 'fa-eye');
+        showNotification("Challenge Resumed. Squares are still removing!");
+    }
+}
+
+// Helper function to update clock status element
+function updateClockStatus(message, iconClass) {
+    clockStatus.innerHTML = `<i class="fas ${iconClass}"></i><span>${message}</span>`;
+}
+
+// Add the event listener for the new button
+pauseContinueButton.addEventListener('click', function() {
+    setPauseState(!isPaused);
+});```
+
+### Step 5: Update Existing Handlers
+
+Modify the existing button handlers (`randomImageButton` and `specialImageButton`) to control the visibility of the new button and the `isChallengeActive` state.
+
+**Update `randomButton.addEventListener('click', ...)`:**
+
+In the first `setTimeout`, set `isChallengeActive = true` and show the pause button. Also, ensure you start the interval with `isPaused = false`.
+
+```javascript
+// Inside randomButton.addEventListener('click', ...)
+// ... (lines 1 to 20 are the same)
+    
+    // Force unpause before starting a new challenge
+    isPaused = false;
+    isChallengeActive = true; 
+    pauseContinueButton.style.display = 'flex'; // Show the pause button
+    pauseContinueButton.innerHTML = PAUSE_CONTENT; // Ensure it says 'Pause'
+
+    // --- STEP 2: TIMEOUT FOR IMAGE LOAD START ---
+    setTimeout(() => {
+        // Hide the word overlay
+        overlays.forEach(overlay => {
+            overlay.classList.remove('show-text'); // TEXT HIDES
+        });
+        
+        // Start image loading (this is asynchronous) and square removal
+        // START THE INTERVAL ONLY IF NOT PAUSED (which it shouldn't be here)
+        if (!isPaused) {
+            startSquareRemovalInterval(); // This function already starts the interval
+        }
+
+        imageElements.forEach((img, index) => {
+            const newIndex = currentImageIndices[index];
+            const newImagePath = `images/${newIndex}.png`;
+            changeImage(img, newImagePath); // Triggers load and later handleImageLoad
+        });
+        
+    }, textDisplayDuration);
+});
 
         // === NOTIFICATION FUNCTION ===
         function showNotification(message, duration = 3000) {
@@ -954,6 +1047,9 @@ function updateClock(timeString) {
             
             // Show progress bar
             progressContainer.style.display = 'block';
+
+            // Update clock status with helper
+            updateClockStatus('Revealing picture...', 'fa-eye');
             
             // Clear any existing interval before starting a new one
             if (squareRemovalInterval) {
@@ -961,7 +1057,6 @@ function updateClock(timeString) {
             }
             
             squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
-        
         }
         
         // NEW FUNCTION: Covers the image and prepares the timer (used by Random Button)
@@ -1193,6 +1288,10 @@ specialButton.addEventListener('click', function() {
     updateClock(READY_CLOCK_TIME);
     revealAndStopSquares(); // FULLY REVEAL the image for the ready state
 
+    isChallengeActive = false; // End the challenge state
+    isPaused = false; // Reset pause state
+    pauseContinueButton.style.display = 'none';
+    
     imagesWrapper.querySelectorAll('.image-overlay-text').forEach(overlay => {
         overlay.classList.remove('show-text');
     });
