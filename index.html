@@ -461,6 +461,14 @@
             background: linear-gradient(135deg, #3a56e4, #2d0a8a);
         }
 
+        #skipButton {
+            background: linear-gradient(135deg, #e63946, #a80000); /* Red/Danger theme */
+            color: white;
+        }
+
+        #skipButton:hover {
+            background: linear-gradient(135deg, #f05e6b, #c00000);
+        
         #pauseContinueButton {
             background: linear-gradient(135deg, #ffc300, #ff8c00); /* Orange/Yellow theme */
             color: var(--primary-dark);
@@ -762,6 +770,10 @@
                 <i class="fas fa-pause"></i>
                 <span>Pause</span>
             </button>
+            <button id="skipButton" class="action-button" style="display: none;">
+                <i class="fas fa-forward"></i>
+                <span>Skip Reveal</span>
+            </button>
             <button id="specialImageButton" class="action-button">
                 <i class="fas fa-home"></i>
                 <span>Back To Ready</span>
@@ -790,6 +802,7 @@
     <script>
         const imagesWrapper = document.getElementById('images-wrapper');
         const randomButton = document.getElementById('randomImageButton');
+        const skipButton = document.getElementById('skipButton');
         const specialButton = document.getElementById('specialImageButton');
         const pauseContinueButton = document.getElementById('pauseContinueButton');
         const clockDisplay = document.getElementById('clock-display');
@@ -1197,6 +1210,7 @@
             isChallengeActive = true;
             pauseContinueButton.style.display = 'flex'; // Make the button visible
             pauseContinueButton.innerHTML = PAUSE_CONTENT; // Ensure it says 'Pause'
+            skipButton.style.display = 'flex'; // <== ADDED: Show the Skip button
 
             // --- STEP 1: PREPARE AND SHOW TEXT/CLOCK ---
             updateClock(newClockTime);
@@ -1253,6 +1267,7 @@
             isChallengeActive = false; // End the challenge state
             isPaused = false; // Reset pause state
             pauseContinueButton.style.display = 'none'; // Hide the button
+            skipButton.style.display = 'none'; // <== ADDED: Hide the Skip button
             // ---------------------------------------------
 
             imagesWrapper.querySelectorAll('.image-overlay-text').forEach(overlay => {
@@ -1270,6 +1285,26 @@
             currentImageIndices = [0];
 
             showNotification("Reset to ready state!");
+        });
+        // === Skip Button Logic (Fast-forward to 0 squares) ===
+        skipButton.addEventListener('click', function() {
+            if (!isChallengeActive) {
+                showNotification("No active challenge to skip!");
+                return; // Only work during a challenge
+            }
+
+            // 1. Fully reveal squares and stop the interval
+            revealAndStopSquares();
+
+            // 2. Update status/notification
+            updateClockStatus('Challenge skipped - Image revealed', 'fa-check-circle');
+            showNotification("Challenge skipped! Picture fully revealed.");
+
+            // 3. Update challenge state and hide action buttons
+            isChallengeActive = false;
+            isPaused = false;
+            pauseContinueButton.style.display = 'none';
+            skipButton.style.display = 'none';
         });
     </script>
 </body>
