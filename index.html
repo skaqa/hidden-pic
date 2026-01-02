@@ -1,3 +1,4 @@
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,28 +40,19 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            /* 1. RESTORED BACKGROUND */
+            background: linear-gradient(135deg, rgba(245, 247, 250, 0.8) 0%, rgba(195, 207, 226, 0.8) 100%), 
+                        url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(67, 97, 238, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(114, 9, 183, 0.1) 0%, transparent 50%);
-            z-index: -1;
         }
 
         .container {
             width: 100%;
-            max-width: 900px;
+            /* 2. WIDENED CONTAINER TO PREVENT BUTTON WRAPPING */
+            max-width: 1100px; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -73,35 +65,14 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
         h1 {
             font-family: 'Nunito', sans-serif;
-            font-size: 3rem;
+            font-size: 3.2rem;
             font-weight: 800;
             background: linear-gradient(90deg, var(--primary-blue), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .subtitle {
-            color: var(--primary-dark);
-            font-size: 1.1rem;
-            opacity: 0.8;
-            max-width: 600px;
-        }
-
-        .game-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-            width: 100%;
         }
 
         .image-container {
@@ -111,24 +82,16 @@
             box-shadow: var(--shadow-lg);
             border: 10px solid white;
             background: #f0f0f0;
-            transition: var(--transition);
-            width: 100%;
-            max-width: 500px;
-            aspect-ratio: 1/1;
-        }
-
-        .image-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            width: 450px; /* Fixed size to ensure local pics fit well */
+            height: 450px;
         }
 
         .flashcard-image {
             display: block;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain; /* Good for flashcards */
             background: white;
-            transition: opacity 0.5s ease;
         }
 
         /* PURPLE COVER BLOCKS */
@@ -145,102 +108,25 @@
         }
 
         .square-block {
-            width: 5%;
+            width: 5%; /* 20x20 grid */
             height: 5%;
             background-color: var(--accent-purple);
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+            transition: opacity 0.4s ease-out;
             opacity: 1;
-            border: 0.5px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .square-block.removing {
-            opacity: 0;
-            transform: scale(0.3) rotate(90deg);
-        }
-
-        .stats-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 15px 25px;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--primary-dark);
-            opacity: 0.7;
-        }
-
-        .progress-container {
-            width: 100%;
-            max-width: 500px;
-            height: 12px;
-            background-color: rgba(0, 0, 0, 0.08);
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
-            width: 0%;
-            transition: width 0.5s ease-out;
-            border-radius: 6px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.4), 
-                transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            border: 0.1px solid rgba(255, 255, 255, 0.05);
         }
 
         .buttons-panel {
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+            gap: 15px;
+            flex-wrap: nowrap; /* Force one line on desktop */
             justify-content: center;
             width: 100%;
-            margin-top: 10px;
         }
 
         .action-button {
-            padding: 16px 32px;
-            font-size: 1.1rem;
+            padding: 16px 24px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             border: none;
@@ -248,513 +134,188 @@
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: white;
-            min-width: 200px;
+            white-space: nowrap; /* 2. PREVENTS TEXT WRAPPING INSIDE BUTTON */
+            flex: 1; /* Allows buttons to share space equally */
+            max-width: 250px;
             justify-content: center;
-            box-shadow: var(--shadow-md);
-            position: relative;
-            overflow: hidden;
         }
 
-        .action-button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
+        #randomImageButton { background: var(--primary-blue); }
+        #pauseContinueButton { background: #ff8c00; }
+        #skipButton { background: #e63946; }
+        #specialImageButton { background: var(--accent-teal); }
+
+        .stats-panel {
+            display: flex;
+            justify-content: space-around;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .action-button:hover::after {
-            opacity: 1;
-        }
-
-        .action-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .action-button:active {
-            transform: translateY(-1px);
-        }
-
-        .action-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        #randomImageButton { 
-            background: linear-gradient(135deg, var(--primary-blue), #3a56d4);
-        }
-        
-        #pauseContinueButton { 
-            background: linear-gradient(135deg, #ff8c00, #e67e22);
-        }
-        
-        #skipButton { 
-            background: linear-gradient(135deg, #e63946, #c1121f);
-        }
-        
-        #specialImageButton { 
-            background: linear-gradient(135deg, var(--accent-teal), #21867a);
-        }
-
-        .timer-display {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 50px;
-            box-shadow: var(--shadow-sm);
-            display: none;
-        }
-
-        .instructions {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
             max-width: 500px;
-            margin-top: 10px;
-            display: none;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 12px;
         }
 
-        .instructions h3 {
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-blue); }
+        .stat-label { font-size: 0.8rem; color: #666; }
 
-        .instructions ul {
-            padding-left: 20px;
-            color: var(--primary-dark);
-            opacity: 0.8;
-            line-height: 1.6;
-        }
-
-        .instructions li {
-            margin-bottom: 8px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 25px;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .image-container {
-                max-width: 400px;
-            }
-            
-            .action-button {
-                min-width: 160px;
-                padding: 14px 20px;
-                font-size: 1rem;
-            }
-            
-            .stats-panel {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .stat-item {
-                flex-direction: row;
-                justify-content: space-between;
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .image-container {
-                max-width: 320px;
-            }
-            
-            .buttons-panel {
-                gap: 12px;
-            }
-            
-            .action-button {
-                min-width: 100%;
-            }
-        }
-
-        .hidden-squares-count {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            z-index: 10;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .fade-in {
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(67, 97, 238, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+        @media (max-width: 900px) {
+            .buttons-panel { flex-wrap: wrap; }
+            .action-button { flex: none; width: 45%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container fade-in">
+    <div class="container">
         <div class="header">
             <h1>Hidden Picture Challenge</h1>
-            <p class="subtitle">Uncover the hidden image by removing purple squares. Test your prediction skills!</p>
         </div>
 
-        <div class="game-area">
-            <div class="image-container" id="main-container">
-                <div class="hidden-squares-count" id="square-counter">400/400</div>
-                <img id="display-image" class="flashcard-image" src="https://images.unsplash.com/photo-1579546929662-711aa81148cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Flashcard">
-                <div class="square-grid-overlay" id="square-grid">
-                    <!-- Squares generated by JS -->
-                </div>
-            </div>
+        <div class="image-container">
+            <img id="display-image" class="flashcard-image" src="images/0.png" alt="Flashcard">
+            <div class="square-grid-overlay" id="square-grid"></div>
+        </div>
 
-            <div class="stats-panel">
-                <div class="stat-item">
-                    <div class="stat-value" id="remaining-count">400</div>
-                    <div class="stat-label">Squares Left</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="time-elapsed">0s</div>
-                    <div class="stat-label">Time</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="images-viewed">0</div>
-                    <div class="stat-label">Images Viewed</div>
-                </div>
+        <div class="stats-panel">
+            <div style="text-align:center">
+                <div class="stat-value" id="remaining-count">400</div>
+                <div class="stat-label">Squares</div>
             </div>
-
-            <div class="progress-container" id="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-
-            <div class="buttons-panel">
-                <button id="randomImageButton" class="action-button pulse">
-                    <i class="fas fa-play-circle"></i> <span>Start Challenge</span>
-                </button>
-                <button id="pauseContinueButton" class="action-button" style="display: none;">
-                    <i class="fas fa-pause"></i> <span>Pause</span>
-                </button>
-                <button id="skipButton" class="action-button" style="display: none;">
-                    <i class="fas fa-eye"></i> <span>Reveal All</span>
-                </button>
-                <button id="specialImageButton" class="action-button">
-                    <i class="fas fa-redo"></i> <span>Reset Game</span>
-                </button>
+            <div style="text-align:center">
+                <div class="stat-value" id="time-elapsed">0s</div>
+                <div class="stat-label">Timer</div>
             </div>
         </div>
 
-        <div class="instructions" id="instructions">
-            <h3>How to Play:</h3>
-            <ul>
-                <li>Click "Start Challenge" to begin with a random image</li>
-                <li>Squares will disappear automatically to reveal the picture</li>
-                <li>Try to guess what the image is before it's fully revealed</li>
-                <li>Use "Pause" to stop the reveal temporarily</li>
-                <li>Use "Reveal All" to immediately show the entire image</li>
-                <li>Track your progress with the stats and progress bar</li>
-            </ul>
+        <div class="buttons-panel">
+            <button id="randomImageButton" class="action-button">
+                <i class="fas fa-play"></i> <span>Start Challenge</span>
+            </button>
+            <button id="pauseContinueButton" class="action-button" style="display: none;">
+                <i class="fas fa-pause"></i> <span>Pause</span>
+            </button>
+            <button id="skipButton" class="action-button" style="display: none;">
+                <i class="fas fa-eye"></i> <span>Reveal All</span>
+            </button>
+            <button id="specialImageButton" class="action-button">
+                <i class="fas fa-redo"></i> <span>Reset Game</span>
+            </button>
         </div>
     </div>
 
     <script>
-        // DOM Elements
         const grid = document.getElementById('square-grid');
         const img = document.getElementById('display-image');
         const startBtn = document.getElementById('randomImageButton');
         const pauseBtn = document.getElementById('pauseContinueButton');
         const skipBtn = document.getElementById('skipButton');
-        const resetBtn = document.getElementById('specialImageButton');
-        const progBar = document.getElementById('progress-bar');
-        const progCont = document.getElementById('progress-container');
-        const counter = document.getElementById('square-counter');
-        const remainingCount = document.getElementById('remaining-count');
-        const timeElapsed = document.getElementById('time-elapsed');
-        const imagesViewed = document.getElementById('images-viewed');
-        const instructions = document.getElementById('instructions');
+        const remCount = document.getElementById('remaining-count');
+        const timeDisp = document.getElementById('time-elapsed');
         
-        // Game variables
-        const TOTAL_SQUARES = 400; // 20x20 grid
+        const TOTAL_SQUARES = 400; 
         let remaining = TOTAL_SQUARES;
         let interval = null;
         let timerInterval = null;
+        let seconds = 0;
         let isPaused = false;
-        let gameActive = false;
-        let secondsElapsed = 0;
-        let imagesCount = 0;
-        
-        // Sample images from Unsplash (free to use)
-        const sampleImages = [
-            'https://images.unsplash.com/photo-1579546929662-711aa81148cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1505142468610-359e7d316be0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
-        ];
 
-        // Initialize the game
-        function initGame() {
-            // Generate the grid of squares
-            grid.innerHTML = '';
-            for (let i = 0; i < TOTAL_SQUARES; i++) {
-                const sq = document.createElement('div');
-                sq.className = 'square-block';
-                grid.appendChild(sq);
-            }
-            
-            // Set initial image
-            img.src = sampleImages[0];
-            
-            // Update UI
-            updateUI();
-            
-            // Show instructions after a delay
-            setTimeout(() => {
-                instructions.style.display = 'block';
-                instructions.classList.add('fade-in');
-            }, 1000);
+        // Initialize Grid
+        for (let i = 0; i < TOTAL_SQUARES; i++) {
+            const sq = document.createElement('div');
+            sq.className = 'square-block';
+            grid.appendChild(sq);
         }
 
-        // Update all UI elements
-        function updateUI() {
-            // Ensure count never goes below 0
-            const displayCount = Math.max(0, remaining);
-            counter.textContent = `${displayCount}/${TOTAL_SQUARES}`;
-            remainingCount.textContent = displayCount;
-            
-            // Update progress bar
-            progBar.style.width = `${((TOTAL_SQUARES - displayCount) / TOTAL_SQUARES) * 100}%`;
-            
-            // Update images viewed
-            imagesViewed.textContent = imagesCount;
-            
-            // Update time
-            const minutes = Math.floor(secondsElapsed / 60);
-            const seconds = secondsElapsed % 60;
-            timeElapsed.textContent = `${minutes > 0 ? `${minutes}m ` : ''}${seconds}s`;
-        }
-
-        // Remove squares from the grid
         function removeSquares() {
-            // Get only squares that are still visible
-            let visible = Array.from(grid.querySelectorAll('.square-block')).filter(s => 
-                window.getComputedStyle(s).opacity !== '0' && 
-                !s.classList.contains('removing')
-            );
-            
+            let visible = Array.from(grid.querySelectorAll('.square-block')).filter(s => s.style.opacity !== '0');
             if (visible.length === 0) {
-                endGame();
+                clearInterval(interval);
+                clearInterval(timerInterval);
+                pauseBtn.style.display = 'none';
+                skipBtn.style.display = 'none';
                 return;
             }
 
-            // Shuffle the visible squares
             visible.sort(() => Math.random() - 0.5);
-
-            // Determine how many squares to remove (more at the beginning, fewer at the end)
-            const baseRemoveCount = 10;
-            const removeCount = Math.min(baseRemoveCount, Math.max(1, Math.floor(visible.length / 10)));
-            
-            // Remove the squares with animation
-            for (let i = 0; i < removeCount; i++) {
-                if (i >= visible.length) break;
-                
-                const target = visible[i];
-                target.classList.add('removing');
-                
-                // Randomize animation delay for a more natural effect
-                setTimeout(() => {
-                    target.style.opacity = '0';
-                }, Math.random() * 100);
-                
+            const batch = Math.min(12, visible.length);
+            for (let i = 0; i < batch; i++) {
+                visible[i].style.opacity = '0';
                 remaining--;
             }
-            
-            updateUI();
+            remCount.textContent = remaining;
         }
 
-        // Start the game
-        function startGame() {
-            if (gameActive) return;
-            
-            // Reset game state
-            clearInterval(interval);
-            clearInterval(timerInterval);
-            remaining = TOTAL_SQUARES;
-            secondsElapsed = 0;
-            
-            // Reset all squares to visible
-            Array.from(grid.querySelectorAll('.square-block')).forEach(s => {
-                s.style.opacity = '1';
-                s.classList.remove('removing');
-            });
-            
-            // Select a random image
-            const randomIndex = Math.floor(Math.random() * sampleImages.length);
-            img.src = sampleImages[randomIndex];
-            imagesCount++;
-            
-            // Update button states
+        startBtn.addEventListener('click', () => {
+            // Loading State
             startBtn.disabled = true;
             startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Loading...</span>';
-            startBtn.classList.remove('pulse');
             
-            // Show game controls
-            pauseBtn.style.display = 'flex';
-            skipBtn.style.display = 'flex';
-            progCont.style.display = 'block';
+            // Reset state
+            clearInterval(interval);
+            clearInterval(timerInterval);
+            seconds = 0;
+            remaining = TOTAL_SQUARES;
+            remCount.textContent = remaining;
+            timeDisp.textContent = '0s';
             
-            // Hide instructions
-            instructions.style.display = 'none';
-            
-            // Start the game after a short delay
+            // Cover with purple
+            Array.from(grid.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '1');
+
             setTimeout(() => {
+                // 3. RESTORED LOCAL PICS (1-7)
+                const rand = Math.floor(Math.random() * 7) + 1;
+                img.src = `images/${rand}.png`;
+                
                 startBtn.disabled = false;
-                startBtn.innerHTML = '<i class="fas fa-play-circle"></i> <span>New Challenge</span>';
+                startBtn.innerHTML = '<i class="fas fa-play"></i> <span>Start Challenge</span>';
                 
-                isPaused = false;
-                gameActive = true;
-                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
+                pauseBtn.style.display = 'flex';
+                skipBtn.style.display = 'flex';
                 
-                // Start removing squares
-                interval = setInterval(removeSquares, 800);
-                
-                // Start timer
+                interval = setInterval(removeSquares, 1000);
                 timerInterval = setInterval(() => {
-                    if (!isPaused) {
-                        secondsElapsed++;
-                        updateUI();
+                    if(!isPaused) {
+                        seconds++;
+                        timeDisp.textContent = seconds + 's';
                     }
                 }, 1000);
-                
-                updateUI();
-            }, 800);
-        }
+            }, 1000);
+        });
 
-        // Pause or continue the game
-        function togglePause() {
+        pauseBtn.addEventListener('click', () => {
             isPaused = !isPaused;
-            
             if (isPaused) {
                 clearInterval(interval);
                 pauseBtn.innerHTML = '<i class="fas fa-play"></i> <span>Continue</span>';
             } else {
-                interval = setInterval(removeSquares, 800);
+                interval = setInterval(removeSquares, 1000);
                 pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
             }
-        }
+        });
 
-        // Skip to reveal the entire image
-        function skipToReveal() {
-            clearInterval(interval);
-            
-            // Animate all squares disappearing
-            Array.from(grid.querySelectorAll('.square-block')).forEach((s, index) => {
-                setTimeout(() => {
-                    s.classList.add('removing');
-                    setTimeout(() => {
-                        s.style.opacity = '0';
-                    }, 100);
-                }, index * 10);
-            });
-            
-            remaining = 0;
-            updateUI();
-            endGame();
-        }
-
-        // End the game
-        function endGame() {
-            gameActive = false;
-            clearInterval(interval);
-            pauseBtn.style.display = 'none';
-            skipBtn.style.display = 'none';
-            
-            // Show congratulatory message after a delay
-            setTimeout(() => {
-                if (remaining === 0) {
-                    alert(`🎉 Congratulations! You revealed the image in ${secondsElapsed} seconds!`);
-                }
-            }, 500);
-        }
-
-        // Reset the game
-        function resetGame() {
+        skipBtn.addEventListener('click', () => {
             clearInterval(interval);
             clearInterval(timerInterval);
-            
-            gameActive = false;
-            isPaused = false;
-            secondsElapsed = 0;
-            
-            // Reset UI
-            startBtn.disabled = false;
-            startBtn.innerHTML = '<i class="fas fa-play-circle"></i> <span>Start Challenge</span>';
-            startBtn.classList.add('pulse');
+            Array.from(grid.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
+            remaining = 0;
+            remCount.textContent = '0';
             pauseBtn.style.display = 'none';
             skipBtn.style.display = 'none';
-            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
-            
-            // Reset squares
-            Array.from(grid.querySelectorAll('.square-block')).forEach(s => {
-                s.style.opacity = '1';
-                s.classList.remove('removing');
-            });
-            
-            remaining = TOTAL_SQUARES;
-            updateUI();
-            
-            // Show instructions
-            instructions.style.display = 'block';
-        }
+        });
 
-        // Event Listeners
-        startBtn.addEventListener('click', startGame);
-        pauseBtn.addEventListener('click', togglePause);
-        skipBtn.addEventListener('click', skipToReveal);
-        resetBtn.addEventListener('click', resetGame);
+        document.getElementById('specialImageButton').addEventListener('click', () => {
+            location.reload();
+        });
 
-        // Initialize the game when page loads
-        window.onload = initGame;
+        // Start revealed
+        window.onload = () => {
+            Array.from(grid.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
+            remCount.textContent = '0';
+        };
     </script>
 </body>
 </html>
+
+  
