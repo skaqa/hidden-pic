@@ -10,17 +10,6 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- PRELOAD INSTRUCTIONS -->
-    <link rel="preload" as="image" href="images/background.png">
-    <link rel="preload" as="image" href="images/0.png">
-    <link rel="preload" as="image" href="images/1.png">
-    <link rel="preload" as="image" href="images/2.png">
-    <link rel="preload" as="image" href="images/3.png">
-    <link rel="preload" as="image" href="images/4.png">
-    <link rel="preload" as="image" href="images/5.png">
-    <link rel="preload" as="image" href="images/6.png">
-    <link rel="preload" as="image" href="images/7.png">
-
     <style>
         :root {
             --primary-blue: #4361ee;
@@ -32,17 +21,12 @@
             --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.07);
             --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
-            --radius-sm: 10px;
             --radius-md: 15px;
             --radius-lg: 20px;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
@@ -58,62 +42,29 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             padding: 20px;
-            color: var(--primary-dark);
         }
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 900px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
+            gap: 25px;
             padding: 40px;
             background-color: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(10px);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .header {
-            text-align: center;
-            width: 100%;
-            padding-bottom: 20px;
-            border-bottom: 3px solid var(--primary-green);
-            margin-bottom: 20px;
         }
 
         h1 {
             font-family: 'Nunito', sans-serif;
-            font-size: 3.2rem;
+            font-size: 3rem;
             font-weight: 800;
-            text-align: center;
-            margin-bottom: 10px;
             background: linear-gradient(90deg, var(--primary-blue), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            position: relative;
-            padding-bottom: 15px;
-        }
-
-        h1:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-green), var(--accent-orange));
-            border-radius: 2px;
-        }
-
-        #content-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
             margin-bottom: 20px;
         }
 
@@ -122,21 +73,19 @@
             border-radius: var(--radius-md);
             overflow: hidden;
             box-shadow: var(--shadow-lg);
-            transition: var(--transition);
             border: 8px solid white;
             background: #e0e0e0;
-            transform-style: preserve-3d;
-            perspective: 1000px;
         }
 
         .flashcard-image {
-            object-fit: contain;
             display: block;
             width: 450px;
             height: 450px;
+            object-fit: contain;
             background: white;
         }
 
+        /* PURPLE COVER BLOCKS */
         .square-grid-overlay {
             position: absolute;
             top: 0;
@@ -152,61 +101,35 @@
         .square-block {
             width: 15px;
             height: 15px;
-            background-color: var(--primary-dark);
+            background-color: var(--accent-purple); /* Changed to purple */
             transition: opacity 0.3s ease-out, transform 0.3s ease-out;
             opacity: 1;
         }
 
         .square-block.removing {
             opacity: 0;
-            transform: scale(0.5) rotate(45deg);
+            transform: scale(0.5);
         }
-
-        .image-overlay-text {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            font-family: 'Nunito', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: white;
-            background: linear-gradient(135deg, rgba(67, 97, 238, 0.95), rgba(114, 9, 183, 0.95));
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            pointer-events: none;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-        }
-
-        .show-text { opacity: 1 !important; }
 
         .progress-container {
             width: 100%;
             height: 10px;
             background-color: rgba(0, 0, 0, 0.1);
             border-radius: 5px;
-            margin-top: 20px;
-            overflow: hidden;
             display: none;
+            overflow: hidden;
         }
 
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
-            width: 100%;
-            transition: width 0.5s ease-out;
+            width: 0%;
+            transition: width 0.5s linear;
         }
 
         .buttons-panel {
             display: flex;
             gap: 15px;
-            margin-top: 20px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -222,64 +145,44 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: var(--shadow-md);
             color: white;
+            min-width: 200px;
+            justify-content: center;
         }
 
-        .action-button:hover { transform: translateY(-3px); }
+        .action-button:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
 
-        #randomImageButton { background: linear-gradient(135deg, var(--primary-blue), #3a0ca3); }
-        #skipButton { background: linear-gradient(135deg, #e63946, #a80000); }
-        #pauseContinueButton { background: linear-gradient(135deg, #ffc300, #ff8c00); color: var(--primary-dark); }
-        #specialImageButton { background: linear-gradient(135deg, var(--primary-green), #2a9d8f); }
+        #randomImageButton { background: var(--primary-blue); }
+        #pauseContinueButton { background: #ff8c00; }
+        #skipButton { background: #e63946; }
+        #specialImageButton { background: #2a9d8f; }
 
         .square-counter {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
             color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
             z-index: 1001;
         }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--primary-blue);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 2000;
-            transform: translateX(150%);
-            transition: transform 0.5s ease;
-        }
-
-        .notification.show { transform: translateX(0); }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .container { animation: fadeInUp 0.6s ease-out; }
     </style>
 </head>
 <body>
-    <div class="notification" id="notification"></div>
 
     <div class="container">
-        <div class="header">
-            <h1>Hidden Picture Challenge</h1>
-            <p class="subtitle">Find the hidden vocabulary image!</p>
-        </div>
+        <h1>Hidden Picture</h1>
 
-        <div id="content-wrapper">
-            <div id="images-wrapper">
-                <!-- Dynamically created -->
+        <div class="image-container" id="main-container">
+            <img id="display-image" class="flashcard-image" src="images/0.png" alt="Flashcard">
+            <div class="square-grid-overlay" id="square-grid">
+                <div class="square-counter" id="square-counter">900/900</div>
+                <!-- Squares generated by JS -->
             </div>
         </div>
 
@@ -295,176 +198,123 @@
                 <i class="fas fa-pause"></i> <span>Pause</span>
             </button>
             <button id="skipButton" class="action-button" style="display: none;">
-                <i class="fas fa-forward"></i> <span>Reveal All</span>
+                <i class="fas fa-eye"></i> <span>Reveal All</span>
             </button>
             <button id="specialImageButton" class="action-button">
                 <i class="fas fa-redo"></i> <span>Reset</span>
             </button>
         </div>
-
-        <div class="footer" style="margin-top: 20px; color: #666;">
-            <span id="timer-display">Squares: 900/900</span>
-        </div>
     </div>
 
     <script>
-        const imagesWrapper = document.getElementById('images-wrapper');
-        const randomButton = document.getElementById('randomImageButton');
-        const skipButton = document.getElementById('skipButton');
-        const specialButton = document.getElementById('specialImageButton');
-        const pauseContinueButton = document.getElementById('pauseContinueButton');
-        const notification = document.getElementById('notification');
-        const progressBar = document.getElementById('progress-bar');
-        const progressContainer = document.getElementById('progress-container');
-        const timerDisplay = document.getElementById('timer-display');
+        const grid = document.getElementById('square-grid');
+        const img = document.getElementById('display-image');
+        const startBtn = document.getElementById('randomImageButton');
+        const pauseBtn = document.getElementById('pauseContinueButton');
+        const skipBtn = document.getElementById('skipButton');
+        const progBar = document.getElementById('progress-bar');
+        const progCont = document.getElementById('progress-container');
+        const counter = document.getElementById('square-counter');
 
-        const TOTAL_IMAGES = 7;
-        const SPECIAL_IMAGE_PATH = 'images/0.png';
         const TOTAL_SQUARES = 900;
-        const SQUARES_PER_SECOND = 15;
-
-        let squareRemovalInterval = null;
-        let remainingSquares = TOTAL_SQUARES;
-        let squaresRemoved = 0;
+        let remaining = TOTAL_SQUARES;
+        let interval = null;
         let isPaused = false;
-        let isChallengeActive = false;
 
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.classList.add('show');
-            setTimeout(() => notification.classList.remove('show'), 3000);
+        // Generate Squares
+        for (let i = 0; i < TOTAL_SQUARES; i++) {
+            const sq = document.createElement('div');
+            sq.className = 'square-block';
+            grid.appendChild(sq);
         }
 
-        function createSquareGrid() {
-            const gridContainer = document.createElement('div');
-            gridContainer.className = 'square-grid-overlay';
-            gridContainer.id = 'square-grid';
-            
-            const counter = document.createElement('div');
-            counter.className = 'square-counter';
-            counter.id = 'square-counter';
-            gridContainer.appendChild(counter);
-
-            for (let i = 0; i < TOTAL_SQUARES; i++) {
-                const square = document.createElement('div');
-                square.className = 'square-block';
-                gridContainer.appendChild(square);
-            }
-            return gridContainer;
+        function updateUI() {
+            counter.textContent = `${remaining}/${TOTAL_SQUARES}`;
+            progBar.style.width = `${((TOTAL_SQUARES - remaining) / TOTAL_SQUARES) * 100}%`;
         }
 
-        function updateSquareCounter() {
-            const counter = document.getElementById('square-counter');
-            if (counter) counter.textContent = `${remainingSquares}/${TOTAL_SQUARES}`;
-            timerDisplay.textContent = `Squares: ${remainingSquares}/${TOTAL_SQUARES}`;
-            progressBar.style.width = `${(squaresRemoved / TOTAL_SQUARES) * 100}%`;
-        }
-
-        function removeSquaresGradually() {
-            const grid = document.getElementById('square-grid');
-            if (!grid) return;
-
-            let visibleSquares = Array.from(grid.querySelectorAll('.square-block')).filter(s => s.style.opacity !== '0');
-
-            if (visibleSquares.length === 0) {
-                clearInterval(squareRemovalInterval);
-                isChallengeActive = false;
-                pauseContinueButton.style.display = 'none';
-                skipButton.style.display = 'none';
+        function removeSquares() {
+            const visible = Array.from(grid.querySelectorAll('.square-block')).filter(s => s.style.opacity !== '0');
+            if (visible.length === 0) {
+                clearInterval(interval);
+                pauseBtn.style.display = 'none';
+                skipBtn.style.display = 'none';
                 return;
             }
 
-            visibleSquares.sort(() => Math.random() - 0.5);
-            const toRemove = Math.min(SQUARES_PER_SECOND, visibleSquares.length);
-
-            for (let i = 0; i < toRemove; i++) {
-                visibleSquares[i].classList.add('removing');
-                const sq = visibleSquares[i];
-                setTimeout(() => { sq.style.opacity = '0'; }, 300);
-                remainingSquares--;
-                squaresRemoved++;
+            const batch = Math.min(15, visible.length);
+            for (let i = 0; i < batch; i++) {
+                const target = visible[Math.floor(Math.random() * visible.length)];
+                target.classList.add('removing');
+                target.style.opacity = '0';
+                remaining--;
             }
-            updateSquareCounter();
+            updateUI();
         }
 
-        pauseContinueButton.addEventListener('click', () => {
+        startBtn.addEventListener('click', () => {
+            // 1. Set Button to Loading
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Loading...</span>';
+            
+            // 2. Prepare visual state (Cover image with purple)
+            clearInterval(interval);
+            remaining = TOTAL_SQUARES;
+            Array.from(grid.querySelectorAll('.square-block')).forEach(s => {
+                s.style.opacity = '1';
+                s.classList.remove('removing');
+            });
+            updateUI();
+
+            // 3. Buffer delay (stays purple while loading)
+            setTimeout(() => {
+                const randImg = Math.floor(Math.random() * 7) + 1;
+                img.src = `images/${randImg}.png`;
+                
+                // Reset Button
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<i class="fas fa-play"></i> <span>Start Challenge</span>';
+                
+                // Show game controls
+                progCont.style.display = 'block';
+                pauseBtn.style.display = 'flex';
+                skipBtn.style.display = 'flex';
+                
+                // Start removing squares
+                interval = setInterval(removeSquares, 1000);
+            }, 1200); // 1.2 second "Loading" buffer
+        });
+
+        pauseBtn.addEventListener('click', () => {
             isPaused = !isPaused;
             if (isPaused) {
-                clearInterval(squareRemovalInterval);
-                pauseContinueButton.innerHTML = '<i class="fas fa-play"></i><span>Continue</span>';
+                clearInterval(interval);
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i> <span>Continue</span>';
             } else {
-                squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
-                pauseContinueButton.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
+                interval = setInterval(removeSquares, 1000);
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
             }
         });
 
-        randomButton.addEventListener('click', () => {
-            isChallengeActive = true;
-            isPaused = false;
-            remainingSquares = TOTAL_SQUARES;
-            squaresRemoved = 0;
-            
-            progressContainer.style.display = 'block';
-            pauseContinueButton.style.display = 'flex';
-            skipButton.style.display = 'flex';
-            pauseContinueButton.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
-
-            const img = document.getElementById('myImage_0');
-            const overlay = document.getElementById('overlay_0');
-            
-            // Cover image
-            Array.from(document.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '1');
-            
-            // Show random word briefly
-            const words = ["you", "he", "she", "it", "they"];
-            overlay.textContent = words[Math.floor(Math.random() * words.length)];
-            overlay.classList.add('show-text');
-
-            setTimeout(() => {
-                overlay.classList.remove('show-text');
-                const randIdx = Math.floor(Math.random() * TOTAL_IMAGES) + 1;
-                img.src = `images/${randIdx}.png`;
-                clearInterval(squareRemovalInterval);
-                squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
-            }, 1000);
+        skipBtn.addEventListener('click', () => {
+            clearInterval(interval);
+            Array.from(grid.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
+            remaining = 0;
+            updateUI();
+            pauseBtn.style.display = 'none';
+            skipBtn.style.display = 'none';
         });
 
-        skipButton.addEventListener('click', () => {
-            clearInterval(squareRemovalInterval);
-            Array.from(document.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
-            remainingSquares = 0;
-            squaresRemoved = TOTAL_SQUARES;
-            updateSquareCounter();
-            isChallengeActive = false;
-            pauseContinueButton.style.display = 'none';
-            skipButton.style.display = 'none';
-        });
-
-        specialButton.addEventListener('click', () => {
+        document.getElementById('specialImageButton').addEventListener('click', () => {
             location.reload();
         });
 
-        // Initialize
-        const container = document.createElement('div');
-        container.className = 'image-container';
-        const img = document.createElement('img');
-        img.id = 'myImage_0';
-        img.className = 'flashcard-image';
-        img.src = SPECIAL_IMAGE_PATH;
-        const overlay = document.createElement('div');
-        overlay.id = 'overlay_0';
-        overlay.className = 'image-overlay-text';
-        
-        container.appendChild(img);
-        container.appendChild(createSquareGrid());
-        container.appendChild(overlay);
-        imagesWrapper.appendChild(container);
-        
-        // Start revealed
-        setTimeout(() => {
-            Array.from(document.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
-            updateSquareCounter();
-        }, 100);
+        // Initialize: Start with image revealed
+        window.onload = () => {
+            Array.from(grid.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
+            remaining = 0;
+            updateUI();
+        };
     </script>
 </body>
 </html>
