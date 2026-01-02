@@ -480,6 +480,11 @@
             </div>
 
             <div class="buttons-panel">
+                <label class="action-button" style="background: #6c757d; cursor: pointer;">
+                    <i class="fas fa-upload"></i> <span>Upload Temporary Pics</span>
+                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
+                </label>
+  
                 <button id="randomImageButton" class="action-button pulse">
                     <i class="fas fa-play-circle"></i> <span>Start Challenge</span>
                 </button>
@@ -756,6 +761,26 @@
 
         // Initialize the game when page loads
         window.onload = initGame;
+
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+    const files = e.target.files;
+    if (files.length > 0) {
+        // Clear the old image list
+        sampleImages.length = 0;
+        
+        // Loop through uploaded files and create temporary URLs
+        for (let i = 0; i < files.length; i++) {
+            const tempUrl = URL.createObjectURL(files[i]);
+            sampleImages.push(tempUrl);
+        }
+        
+        // Update the stats or notify the user
+        imagesCount = 0;
+        alert("Success! " + files.length + " temporary images loaded. Click Start to play with them.");
+        resetGame();
+    }
+});
+        
     </script>
 </body>
 </html>
