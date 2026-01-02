@@ -703,15 +703,9 @@
         function endGame() {
             gameActive = false;
             clearInterval(interval);
+            clearInterval(timerInterval);
             pauseBtn.style.display = 'none';
             skipBtn.style.display = 'none';
-            
-            // Show congratulatory message after a delay
-            setTimeout(() => {
-                if (remaining === 0) {
-                    alert(`🎉 Congratulations! You revealed the image in ${secondsElapsed} seconds!`);
-                }
-            }, 500);
         }
 
         // Reset the game
