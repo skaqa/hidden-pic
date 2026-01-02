@@ -1,16 +1,16 @@
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time & Hidden Picture Challenge | Interactive Flashcards</title>
+    <title>Hidden Picture Challenge | Interactive Flashcards</title>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Digital Clock Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-    <!-- PRELOAD INSTRUCTIONS START HERE -->
+    
+    <!-- PRELOAD INSTRUCTIONS -->
     <link rel="preload" as="image" href="images/background.png">
     <link rel="preload" as="image" href="images/0.png">
     <link rel="preload" as="image" href="images/1.png">
@@ -20,7 +20,7 @@
     <link rel="preload" as="image" href="images/5.png">
     <link rel="preload" as="image" href="images/6.png">
     <link rel="preload" as="image" href="images/7.png">
-    <!-- PRELOAD INSTRUCTIONS END HERE -->
+
     <style>
         :root {
             --primary-blue: #4361ee;
@@ -36,9 +36,6 @@
             --radius-md: 15px;
             --radius-lg: 20px;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            /* NEW CLOCK VARIABLES */
-            --clock-bg: linear-gradient(145deg, #0f0f23, #1a1a2e);
-            --clock-glow: 0 0 30px rgba(67, 97, 238, 0.6);
         }
 
         * {
@@ -54,7 +51,6 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            margin: 0;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             background-image: url('images/background.png');
             background-size: cover;
@@ -67,7 +63,7 @@
 
         .container {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1000px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -92,15 +88,11 @@
             font-family: 'Nunito', sans-serif;
             font-size: 3.2rem;
             font-weight: 800;
-            color: var(--primary-dark);
             text-align: center;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            letter-spacing: -0.5px;
             background: linear-gradient(90deg, var(--primary-blue), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             position: relative;
             padding-bottom: 15px;
         }
@@ -117,31 +109,12 @@
             border-radius: 2px;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: #6c757d;
-            max-width: 600px;
-            margin: 0 auto 25px;
-            line-height: 1.5;
-        }
-
-        /* Wrapper for Image and Clock */
         #content-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 40px;
             width: 100%;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        /* Images Wrapper */
-        #images-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            transition: var(--transition);
         }
 
         .image-container {
@@ -151,32 +124,19 @@
             box-shadow: var(--shadow-lg);
             transition: var(--transition);
             border: 8px solid white;
-            background: #e0e0e0; /* DEBUG: Added light gray background */
+            background: #e0e0e0;
             transform-style: preserve-3d;
             perspective: 1000px;
-        }
-
-        .image-container:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
         }
 
         .flashcard-image {
             object-fit: contain;
             display: block;
-            opacity: 1;
-            transition: opacity 0.4s ease-in-out;
-            background: white;
-            transform: translateZ(10px);
-        }
-
-        /* Size adjustments - Fixed to single size (was images-wrapper-1) */
-        .images-wrapper-1 .flashcard-image {
             width: 450px;
             height: 450px;
+            background: white;
         }
 
-        /* NEW: Square Grid Container (positioned absolutely over the image) */
         .square-grid-overlay {
             position: absolute;
             top: 0;
@@ -185,28 +145,23 @@
             height: 100%;
             display: flex;
             flex-wrap: wrap;
-            z-index: 999; /* Below text overlay (1000), above image */
+            z-index: 999;
             pointer-events: none;
-            transform: translateZ(5px);
         }
 
-        /* NEW: Single Square Block */
         .square-block {
-            width: 15px; /* 450px / 30 = 15px per side */
+            width: 15px;
             height: 15px;
-            background-color: var(--primary-dark); /* Dark color to block the image */
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out; /* Smooth removal effect */
+            background-color: var(--primary-dark);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
             opacity: 1;
-            transform: scale(1);
         }
 
-        /* Enhanced animation for square removal */
         .square-block.removing {
             opacity: 0;
             transform: scale(0.5) rotate(45deg);
         }
 
-        /* Overlay text */
         .image-overlay-text {
             position: absolute;
             top: 0;
@@ -226,159 +181,11 @@
             transition: opacity 0.3s ease-in-out;
             pointer-events: none;
             text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-            letter-spacing: 2px;
-            transform: translateZ(15px);
             border-radius: 10px;
         }
 
-        .show-text {
-            opacity: 1 !important;
-        }
+        .show-text { opacity: 1 !important; }
 
-        .image-loading {
-            opacity: 0.5;
-        }
-
-        /* MODERN DIGITAL CLOCK STYLES */
-        #digital-clock {
-            background: var(--clock-bg);
-            color: #ffffff;
-            font-family: 'Orbitron', monospace;
-            padding: 30px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--clock-glow),
-                        inset 0 8px 32px rgba(0, 0, 0, 0.4),
-                        0 20px 40px rgba(0, 0, 0, 0.3);
-            font-size: 5rem;
-            font-weight: 700;
-            text-shadow: 0 0 15px rgba(67, 97, 238, 0.7);
-            min-width: 320px;
-            text-align: center;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 450px;
-            overflow: hidden;
-            transition: all 0.5s ease;
-        }
-
-        /* Shimmer effect for the clock background */
-        #digital-clock:before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to right,
-                transparent 20%,
-                rgba(67, 97, 238, 0.1) 50%,
-                transparent 80%
-            );
-            transform: rotate(30deg);
-            animation: shimmer 8s infinite linear;
-        }
-
-        /* Semi-transparent overlay for subtle light */
-        #digital-clock:after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg,
-                rgba(76, 201, 240, 0.05) 0%,
-                rgba(114, 9, 183, 0.05) 100%);
-            border-radius: inherit;
-            pointer-events: none;
-        }
-
-        /* Gradient border effect using a mask */
-        .clock-border {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: inherit;
-            padding: 2px;
-            background: linear-gradient(135deg,
-                rgba(67, 97, 238, 0.8),
-                rgba(76, 201, 240, 0.8),
-                rgba(114, 9, 183, 0.8));
-            -webkit-mask:
-                linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-        }
-
-        /* Gradient Text for the actual time display */
-        #clock-display {
-            font-weight: 800;
-            letter-spacing: 5px;
-            z-index: 2;
-            position: relative;
-            padding: 0 20px;
-            background: linear-gradient(90deg, #ffffff, #a5b4fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 10px rgba(67, 97, 238, 0.8));
-        }
-
-        /* Style for the blinking colon separator (set in JS) */
-        .clock-separator {
-            animation: blink 2s infinite;
-            font-weight: 300;
-        }
-
-        /* Style for the time label (e.g., O'CLOCK, THIRTY) */
-        .time-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.8rem;
-            color: #a5b4fc;
-            margin-top: 25px;
-            font-weight: 400;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(165, 180, 252, 0.5);
-            z-index: 2;
-            position: relative;
-            text-transform: uppercase;
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Style for the clock status text */
-        .clock-status {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.2rem;
-            color: #8b9dff;
-            margin-top: 15px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            z-index: 2;
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .clock-status i {
-            font-size: 1.4rem;
-            color: #4cc9f0;
-        }
-
-        /* Progress Bar for Square Removal */
         .progress-container {
             width: 100%;
             height: 10px;
@@ -386,30 +193,27 @@
             border-radius: 5px;
             margin-top: 20px;
             overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            display: none;
         }
 
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
             width: 100%;
-            border-radius: 5px;
             transition: width 0.5s ease-out;
         }
 
-        /* Buttons Panel */
         .buttons-panel {
             display: flex;
-            gap: 25px;
+            gap: 15px;
             margin-top: 20px;
             flex-wrap: wrap;
             justify-content: center;
-            width: 100%;
         }
 
         .action-button {
-            padding: 18px 40px;
-            font-size: 1.2rem;
+            padding: 15px 30px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             border: none;
@@ -417,124 +221,18 @@
             transition: var(--transition);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
-            min-width: 220px;
+            gap: 10px;
             box-shadow: var(--shadow-md);
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .action-button:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: width 0.4s ease;
-            z-index: -1;
-        }
-
-        .action-button:hover:before {
-            width: 100%;
-        }
-
-        .action-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .action-button:active {
-            transform: translateY(-2px);
-        }
-
-        #randomImageButton {
-            background: linear-gradient(135deg, var(--primary-blue), #3a0ca3);
             color: white;
         }
 
-        #randomImageButton:hover {
-            background: linear-gradient(135deg, #3a56e4, #2d0a8a);
-        }
+        .action-button:hover { transform: translateY(-3px); }
 
-        #skipButton {
-            background: linear-gradient(135deg, #e63946, #a80000); /* Red/Danger theme */
-            color: white;
-        }
+        #randomImageButton { background: linear-gradient(135deg, var(--primary-blue), #3a0ca3); }
+        #skipButton { background: linear-gradient(135deg, #e63946, #a80000); }
+        #pauseContinueButton { background: linear-gradient(135deg, #ffc300, #ff8c00); color: var(--primary-dark); }
+        #specialImageButton { background: linear-gradient(135deg, var(--primary-green), #2a9d8f); }
 
-        #skipButton:hover {
-            background: linear-gradient(135deg, #f05e6b, #c00000);
-        }
-        
-        #pauseContinueButton {
-            background: linear-gradient(135deg, #ffc300, #ff8c00); /* Orange/Yellow theme */
-            color: var(--primary-dark);
-        }
-
-        #pauseContinueButton:hover {
-            background: linear-gradient(135deg, #ffdb58, #ff9f00);
-        }
-
-        #specialImageButton {
-            background: linear-gradient(135deg, var(--primary-green), #2a9d8f);
-            color: white;
-        }
-
-        #specialImageButton:hover {
-            background: linear-gradient(135deg, #3accef, #21867a);
-        }
-
-        .loading {
-            background: linear-gradient(135deg, #ffb347, #ffcc33) !important;
-            cursor: wait !important;
-            pointer-events: none;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            width: 100%;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            background: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .stat-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-item i {
-            color: var(--primary-blue);
-        }
-
-        /* Square removal counter */
         .square-counter {
             position: absolute;
             top: 15px;
@@ -545,173 +243,8 @@
             border-radius: 5px;
             font-size: 0.9rem;
             z-index: 1001;
-            font-family: 'Poppins', sans-serif;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .images-wrapper-1 .flashcard-image {
-                width: 400px;
-                height: 400px;
-            }
-            #digital-clock {
-                height: 400px;
-            }
-            .square-block {
-                width: 13.33px; /* 400px / 30 */
-                height: 13.33px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .container {
-                padding: 30px 20px;
-            }
-
-            h1 {
-                font-size: 2.8rem;
-            }
-
-            .images-wrapper-1 .flashcard-image {
-                width: 350px;
-                height: 350px;
-            }
-            #digital-clock {
-                height: 350px;
-                font-size: 4rem;
-            }
-            .square-block {
-                width: 11.66px; /* 350px / 30 */
-                height: 11.66px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            #content-wrapper {
-                flex-direction: column;
-                gap: 30px;
-            }
-
-            h1 {
-                font-size: 2.3rem;
-            }
-
-            .buttons-panel {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .action-button {
-                width: 100%;
-                max-width: 350px;
-            }
-
-            .images-wrapper-1 .flashcard-image {
-                width: 300px;
-                height: 300px;
-            }
-
-            .image-overlay-text {
-                font-size: 3rem;
-            }
-
-            #digital-clock {
-                height: auto;
-                width: 100%;
-                max-width: 300px;
-                font-size: 4rem;
-            }
-            .square-block {
-                width: 10px; /* 300px / 30 */
-                height: 10px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                padding: 20px 15px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .images-wrapper-1 .flashcard-image {
-                width: 260px;
-                height: 260px;
-            }
-
-            .image-overlay-text {
-                font-size: 2.5rem;
-            }
-
-            #digital-clock {
-                max-width: 260px;
-                font-size: 3rem;
-            }
-            /* Note: Square blocks will be smaller than 10px here, which is fine */
-        }
-
-        /* Animation for initial load */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) rotate(30deg); }
-            100% { transform: translateX(100%) rotate(30deg); }
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: var(--clock-glow); }
-            50% { box-shadow: 0 0 40px rgba(67, 97, 238, 0.8); }
-            100% { box-shadow: var(--clock-glow); }
-        }
-
-        @keyframes colorShift {
-            0% {
-                background: linear-gradient(135deg, #0f0f23, #1a1a2e);
-                box-shadow: 0 0 30px rgba(67, 97, 238, 0.6);
-            }
-            50% {
-                background: linear-gradient(135deg, #1a1a2e, #16213e);
-                box-shadow: 0 0 35px rgba(76, 201, 240, 0.7);
-            }
-            100% {
-                background: linear-gradient(135deg, #0f0f23, #1a1a2e);
-                box-shadow: 0 0 30px rgba(67, 97, 238, 0.6);
-            }
-        }
-
-
-        .container, .header, #content-wrapper, .buttons-panel {
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        #content-wrapper { animation-delay: 0.1s; }
-        .buttons-panel { animation-delay: 0.2s; }
-
-        /* Notification styles */
         .notification {
             position: fixed;
             top: 20px;
@@ -720,16 +253,19 @@
             color: white;
             padding: 15px 25px;
             border-radius: 10px;
-            box-shadow: var(--shadow-md);
             z-index: 2000;
             transform: translateX(150%);
             transition: transform 0.5s ease;
-            font-weight: 500;
         }
 
-        .notification.show {
-            transform: translateX(0);
+        .notification.show { transform: translateX(0); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        .container { animation: fadeInUp 0.6s ease-out; }
     </style>
 </head>
 <body>
@@ -737,24 +273,13 @@
 
     <div class="container">
         <div class="header">
-            <h1>Time & Hidden Picture Challenge</h1>
-            <p class="subtitle">Interactive flashcards for learning. Match the time with the vocabulary word!</p>
+            <h1>Hidden Picture Challenge</h1>
+            <p class="subtitle">Find the hidden vocabulary image!</p>
         </div>
 
         <div id="content-wrapper">
-            <div id="images-wrapper" class="images-wrapper-1">
-                <!-- Image Container with Square Grid will be dynamically created here -->
-            </div>
-
-
-            <div id="digital-clock">
-                <div class="clock-border"></div>  <!-- NEW: For the gradient border -->
-                <span id="clock-display">00:00</span>
-                <span class="time-label" id="time-label">Ready</span>
-                <div class="clock-status" id="clock-status"> <!-- NEW: For dynamic status text/icon -->
-                    <i class="fas fa-clock"></i>
-                    <span>Waiting for challenge</span>
-                </div>
+            <div id="images-wrapper">
+                <!-- Dynamically created -->
             </div>
         </div>
 
@@ -764,39 +289,21 @@
 
         <div class="buttons-panel">
             <button id="randomImageButton" class="action-button">
-                <i class="fas fa-random"></i>
-                <span>Show Random Images</span>
+                <i class="fas fa-play"></i> <span>Start Challenge</span>
             </button>
             <button id="pauseContinueButton" class="action-button" style="display: none;">
-                <i class="fas fa-pause"></i>
-                <span>Pause</span>
+                <i class="fas fa-pause"></i> <span>Pause</span>
             </button>
             <button id="skipButton" class="action-button" style="display: none;">
-                <i class="fas fa-forward"></i>
-                <span>Skip Reveal</span>
+                <i class="fas fa-forward"></i> <span>Reveal All</span>
             </button>
             <button id="specialImageButton" class="action-button">
-                <i class="fas fa-home"></i>
-                <span>Back To Ready</span>
+                <i class="fas fa-redo"></i> <span>Reset</span>
             </button>
         </div>
 
-        <div class="footer">
-            <p>Time & Hidden Picture Challenge • Interactive Learning Tool</p>
-            <div class="stats">
-                <div class="stat-item">
-                    <i class="fas fa-images"></i>
-                    <span>Total Images: 7</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>Shuffle Algorithm: Fisher-Yates</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-stopwatch"></i>
-                    <span id="timer-display">Squares: 900/900</span>
-                </div>
-            </div>
+        <div class="footer" style="margin-top: 20px; color: #666;">
+            <span id="timer-display">Squares: 900/900</span>
         </div>
     </div>
 
@@ -806,9 +313,6 @@
         const skipButton = document.getElementById('skipButton');
         const specialButton = document.getElementById('specialImageButton');
         const pauseContinueButton = document.getElementById('pauseContinueButton');
-        const clockDisplay = document.getElementById('clock-display');
-        const timeLabel = document.getElementById('time-label');
-        const clockStatus = document.getElementById('clock-status');
         const notification = document.getElementById('notification');
         const progressBar = document.getElementById('progress-bar');
         const progressContainer = document.getElementById('progress-container');
@@ -816,145 +320,34 @@
 
         const TOTAL_IMAGES = 7;
         const SPECIAL_IMAGE_PATH = 'images/0.png';
-
-        const RANDOM_BUTTON_CONTENT = '<i class="fas fa-random"></i><span>Show Random Images</span>';
-        const SPECIAL_BUTTON_CONTENT = '<i class="fas fa-home"></i><span>Back To Ready</span>';
-        const PAUSE_CONTENT = '<i class="fas fa-pause"></i><span>Pause</span>';
-        const CONTINUE_CONTENT = '<i class="fas fa-play"></i><span>Continue</span>';
-
-        let currentImageIndices = [];
-        const READY_CLOCK_TIME = "00:00";
-        let squareRemovalInterval = null; // For the continuous removal
-        const TOTAL_SQUARES = 900; // 30x30
+        const TOTAL_SQUARES = 900;
         const SQUARES_PER_SECOND = 15;
+
+        let squareRemovalInterval = null;
         let remainingSquares = TOTAL_SQUARES;
         let squaresRemoved = 0;
         let isPaused = false;
         let isChallengeActive = false;
 
-        // === PAUSE/CONTINUE LOGIC ===
-
-        function setPauseState(shouldPause) {
-            if (!isChallengeActive) return; // Only pause if a challenge is running
-
-            isPaused = shouldPause;
-
-            if (isPaused) {
-                // Pause: Clear the interval, update button, show notification
-                clearInterval(squareRemovalInterval);
-                squareRemovalInterval = null;
-
-                pauseContinueButton.innerHTML = CONTINUE_CONTENT;
-                updateClockStatus('Challenge paused', 'fa-pause-circle');
-                showNotification("Challenge Paused. Click 'Continue' to resume.");
-
-            } else {
-                // Continue: Restart the interval, update button, show notification
-                squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
-
-                pauseContinueButton.innerHTML = PAUSE_CONTENT;
-                updateClockStatus('Revealing picture...', 'fa-eye');
-                showNotification("Challenge Resumed. Squares are still removing!");
-            }
-        }
-
-        // Helper function to update clock status element
-        function updateClockStatus(message, iconClass) {
-            clockStatus.innerHTML = `<i class="fas ${iconClass}"></i><span>${message}</span>`;
-        }
-
-        // Add the event listener for the new button
-        pauseContinueButton.addEventListener('click', function() {
-            setPauseState(!isPaused);
-        });
-
-        // === NOTIFICATION FUNCTION ===
-        function showNotification(message, duration = 3000) {
+        function showNotification(message) {
             notification.textContent = message;
             notification.classList.add('show');
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, duration);
+            setTimeout(() => notification.classList.remove('show'), 3000);
         }
 
-
-        // === ENHANCED CLOCK FUNCTIONS ===
-        function getRandomClockTime() {
-            // This function remains the same, but included for completeness:
-            const randomHour = Math.floor(Math.random() * 12) + 1;
-            const randomMinute = Math.random() < 0.5 ? 0 : 30;
-
-            const formattedHour = String(randomHour).padStart(2, '0');
-            const formattedMinute = String(randomMinute).padStart(2, '0');
-
-            return `${formattedHour}:${formattedMinute}`;
-        }
-
-        function updateClock(timeString) {
-            // 1. Add blinking effect to the colon separator
-            const colon = '<span class="clock-separator">:</span>';
-            const displayText = timeString.replace(':', colon);
-            clockDisplay.innerHTML = displayText;
-
-            // 2. Add pulse and colorShift animation to the entire clock
-            const clockElement = document.getElementById('digital-clock');
-            clockElement.style.animation = 'pulse 2s ease, colorShift 8s infinite';
-
-            if (timeString === READY_CLOCK_TIME) {
-                timeLabel.textContent = "READY";
-                clockStatus.innerHTML = '<i class="fas fa-clock"></i><span>Waiting for challenge</span>';
-                clockElement.style.boxShadow = 'var(--clock-glow)'; // Reset glow on ready
-            } else {
-                const minute = timeString.split(':')[1];
-                if (minute === '00') {
-                    timeLabel.textContent = "O'CLOCK";
-                } else if (minute === '30') {
-                    timeLabel.textContent = "THIRTY";
-                } else {
-                    timeLabel.textContent = "";
-                }
-
-                // 3. Update clock status based on time
-                const hour = parseInt(timeString.split(':')[0]);
-                let status = '';
-                if (hour >= 6 && hour < 12) {
-                    status = 'Morning session';
-                } else if (hour >= 12 && hour < 18) {
-                    status = 'Afternoon session';
-                } else {
-                    status = 'Evening session';
-                }
-                clockStatus.innerHTML = `<i class="fas fa-hourglass-half"></i><span>${status}</span>`;
-
-                // 4. Update clock glow color based on time (visual cue for the user)
-                if (minute === '00') {
-                    clockElement.style.boxShadow = '0 0 35px rgba(76, 201, 240, 0.7)'; // Cyan glow for o'clock
-                } else {
-                    clockElement.style.boxShadow = '0 0 35px rgba(114, 9, 183, 0.7)'; // Purple glow for half-past
-                }
-            }
-        }
-        // END CLOCK FUNCTIONS
-
-
-        // === SQUARE GRID FUNCTIONS (REFACTORED FOR COVER/REVEAL) ===
         function createSquareGrid() {
             const gridContainer = document.createElement('div');
             gridContainer.className = 'square-grid-overlay';
             gridContainer.id = 'square-grid';
-
-            // Add counter to show remaining squares
+            
             const counter = document.createElement('div');
             counter.className = 'square-counter';
             counter.id = 'square-counter';
-            counter.textContent = `${TOTAL_SQUARES}/${TOTAL_SQUARES}`;
             gridContainer.appendChild(counter);
 
             for (let i = 0; i < TOTAL_SQUARES; i++) {
                 const square = document.createElement('div');
                 square.className = 'square-block';
-                square.dataset.index = i;
                 gridContainer.appendChild(square);
             }
             return gridContainer;
@@ -962,351 +355,118 @@
 
         function updateSquareCounter() {
             const counter = document.getElementById('square-counter');
-            if (counter) {
-                counter.textContent = `${remainingSquares}/${TOTAL_SQUARES}`;
-            }
+            if (counter) counter.textContent = `${remainingSquares}/${TOTAL_SQUARES}`;
             timerDisplay.textContent = `Squares: ${remainingSquares}/${TOTAL_SQUARES}`;
-
-            // Update progress bar
-            const progressPercent = (squaresRemoved / TOTAL_SQUARES) * 100;
-            progressBar.style.width = `${progressPercent}%`;
+            progressBar.style.width = `${(squaresRemoved / TOTAL_SQUARES) * 100}%`;
         }
 
         function removeSquaresGradually() {
             const grid = document.getElementById('square-grid');
             if (!grid) return;
 
-            // Get all squares that are currently visible
-            let visibleSquares = Array.from(grid.querySelectorAll('.square-block')).filter(
-                square => square.style.opacity !== '0'
-            );
+            let visibleSquares = Array.from(grid.querySelectorAll('.square-block')).filter(s => s.style.opacity !== '0');
 
             if (visibleSquares.length === 0) {
                 clearInterval(squareRemovalInterval);
-                squareRemovalInterval = null;
-                showNotification("Picture fully revealed! Great job!");
+                isChallengeActive = false;
+                pauseContinueButton.style.display = 'none';
+                skipButton.style.display = 'none';
                 return;
             }
 
             visibleSquares.sort(() => Math.random() - 0.5);
+            const toRemove = Math.min(SQUARES_PER_SECOND, visibleSquares.length);
 
-            const squaresToRemove = Math.min(SQUARES_PER_SECOND, visibleSquares.length);
-
-            for (let i = 0; i < squaresToRemove; i++) {
-                if (visibleSquares[i]) {
-                    visibleSquares[i].classList.add('removing');
-
-                    setTimeout(() => {
-                        visibleSquares[i].style.opacity = '0';
-                        visibleSquares[i].classList.remove('removing');
-                    }, 300);
-
-                    remainingSquares--;
-                    squaresRemoved++;
-                }
+            for (let i = 0; i < toRemove; i++) {
+                visibleSquares[i].classList.add('removing');
+                const sq = visibleSquares[i];
+                setTimeout(() => { sq.style.opacity = '0'; }, 300);
+                remainingSquares--;
+                squaresRemoved++;
             }
-
             updateSquareCounter();
         }
 
-        function startSquareRemovalInterval() {
-            // Reset counters
+        pauseContinueButton.addEventListener('click', () => {
+            isPaused = !isPaused;
+            if (isPaused) {
+                clearInterval(squareRemovalInterval);
+                pauseContinueButton.innerHTML = '<i class="fas fa-play"></i><span>Continue</span>';
+            } else {
+                squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
+                pauseContinueButton.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
+            }
+        });
+
+        randomButton.addEventListener('click', () => {
+            isChallengeActive = true;
+            isPaused = false;
             remainingSquares = TOTAL_SQUARES;
             squaresRemoved = 0;
-            updateSquareCounter();
-
-            // Show progress bar
+            
             progressContainer.style.display = 'block';
+            pauseContinueButton.style.display = 'flex';
+            skipButton.style.display = 'flex';
+            pauseContinueButton.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
 
-            // Update clock status with helper
-            updateClockStatus('Revealing picture...', 'fa-eye');
+            const img = document.getElementById('myImage_0');
+            const overlay = document.getElementById('overlay_0');
+            
+            // Cover image
+            Array.from(document.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '1');
+            
+            // Show random word briefly
+            const words = ["you", "he", "she", "it", "they"];
+            overlay.textContent = words[Math.floor(Math.random() * words.length)];
+            overlay.classList.add('show-text');
 
-            // Clear any existing interval before starting a new one
-            if (squareRemovalInterval) {
-                clearInterval(squareRemovalInterval);
-            }
-
-            squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
-        }
-
-        // NEW FUNCTION: Covers the image and prepares the timer (used by Random Button)
-        function coverAndResetSquares() {
-            if (squareRemovalInterval) {
-                clearInterval(squareRemovalInterval);
-                squareRemovalInterval = null;
-            }
-
-            progressContainer.style.display = 'none';
-
-            const grid = document.getElementById('square-grid');
-            if (grid) {
-                Array.from(grid.querySelectorAll('.square-block')).forEach(square => {
-                    square.style.opacity = '1'; // FULLY COVER
-                    square.classList.remove('removing');
-                });
-
-                remainingSquares = TOTAL_SQUARES;
-                squaresRemoved = 0;
-                updateSquareCounter();
-            }
-        }
-
-        // NEW FUNCTION: Reveals the image and stops the timer (used by Special Button & Initial Load)
-        function revealAndStopSquares() {
-            if (squareRemovalInterval) {
-                clearInterval(squareRemovalInterval);
-                squareRemovalInterval = null;
-            }
-
-            progressContainer.style.display = 'none';
-
-            const grid = document.getElementById('square-grid');
-            if (grid) {
-                Array.from(grid.querySelectorAll('.square-block')).forEach(square => {
-                    square.style.opacity = '0'; // FULLY REVEAL
-                    square.classList.remove('removing');
-                });
-
-                remainingSquares = 0;
-                squaresRemoved = TOTAL_SQUARES;
-                updateSquareCounter();
-            }
-        }
-        // END SQUARE GRID FUNCTIONS
-
-
-        // === WORD & IMAGE SHUFFLE BAGS (Skipping for brevity, no changes needed) ===
-        const VOCAB_WORDS = ["you", "you(2 or more)", "he", "she", "it", "they"];
-        let wordShuffleBag = [];
-
-        function refillAndShuffleWordBag() {
-            wordShuffleBag = [...VOCAB_WORDS];
-            for (let i = wordShuffleBag.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [wordShuffleBag[i], wordShuffleBag[j]] = [wordShuffleBag[j], wordShuffleBag[i]];
-            }
-        }
-
-        function getNextShuffledWord() {
-            if (wordShuffleBag.length === 0) {
-                refillAndShuffleWordBag();
-            }
-            return wordShuffleBag.pop();
-        }
-
-        let shuffleBag = [];
-
-        function refillAndShuffleBag() {
-            shuffleBag = [];
-            for (let i = 1; i <= TOTAL_IMAGES; i++) {
-                shuffleBag.push(i);
-            }
-            for (let i = shuffleBag.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffleBag[i], shuffleBag[j]] = [shuffleBag[j], shuffleBag[i]];
-            }
-        }
-
-        function getNextShuffledImage() {
-            if (shuffleBag.length === 0) {
-                refillAndShuffleBag();
-                showNotification("Shuffling images... New set loaded!");
-            }
-            return shuffleBag.pop();
-        }
-
-        refillAndShuffleWordBag();
-        refillAndShuffleBag();
-
-        // === Image UI Management (UPDATED for Initial Reveal) ===
-
-        function createInitialImageSlot() {
-            const count = 1;
-            imagesWrapper.className = `images-wrapper-${count}`;
-            currentImageIndices = Array(count).fill(0);
-
-            const container = document.createElement('div');
-            container.className = 'image-container';
-
-            const img = document.createElement('img');
-            img.id = `myImage_0`;
-            img.className = 'flashcard-image';
-            img.src = SPECIAL_IMAGE_PATH;
-            img.alt = `Vocabulary flashcard 1`;
-            img.decoding = 'async';
-
-            const overlay = document.createElement('div');
-            overlay.id = `overlay_0`;
-            overlay.className = 'image-overlay-text';
-            overlay.textContent = "WORD";
-
-            const squareGrid = createSquareGrid();
-
-            img.addEventListener('load', handleImageLoad);
-            img.addEventListener('error', handleImageLoad);
-
-            container.appendChild(img);
-            container.appendChild(squareGrid);
-            container.appendChild(overlay);
-            imagesWrapper.appendChild(container);
-
-            progressContainer.style.display = 'none';
-        }
-
-        // Initial setup
-        createInitialImageSlot();
-        updateClock(READY_CLOCK_TIME);
-        revealAndStopSquares(); // *** FIX: REVEAL THE IMAGE ON LOAD ***
-
-
-        // === Button Feedback and Handlers (Skipping for brevity) ===
-
-        function setButtonLoading(button, isLoading) {
-            if (isLoading) {
-                button.classList.add('loading');
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Loading...</span>';
-            } else {
-                button.classList.remove('loading');
-                if (button.id === 'randomImageButton') {
-                    button.innerHTML = RANDOM_BUTTON_CONTENT;
-                } else if (button.id === 'specialImageButton') {
-                    button.innerHTML = SPECIAL_BUTTON_CONTENT;
-                }
-            }
-        }
-
-        function handleImageLoad(event) {
-            const img = event.target;
-            img.classList.remove('image-loading');
-
-            const allImagesLoaded = Array.from(imagesWrapper.querySelectorAll('.flashcard-image')).every(
-                img => !img.classList.contains('image-loading')
-            );
-
-            if (allImagesLoaded && randomButton.classList.contains('loading')) {
-                setButtonLoading(randomButton, false);
-            } else if (allImagesLoaded && specialButton.classList.contains('loading')) {
-                setButtonLoading(specialButton, false);
-            }
-        }
-
-        function changeImage(imgElement, newPath) {
-            imgElement.classList.add('image-loading');
-            imgElement.src = newPath;
-        }
-
-        // === Random Button Logic (CORRECTED) ===
-        randomButton.addEventListener('click', function() {
-            if (randomButton.classList.contains('loading')) return;
-
-            setButtonLoading(randomButton, true);
-            coverAndResetSquares(); // Cover the image for the challenge
-
-            const newClockTime = getRandomClockTime();
-            const imageElements = imagesWrapper.querySelectorAll('.flashcard-image');
-            const overlays = imagesWrapper.querySelectorAll('.image-overlay-text');
-            const textDisplayDuration = 1000;
-
-            isPaused = false;
-            isChallengeActive = true;
-            pauseContinueButton.style.display = 'flex'; // Make the button visible
-            pauseContinueButton.innerHTML = PAUSE_CONTENT; // Ensure it says 'Pause'
-            skipButton.style.display = 'flex'; // <== ADDED: Show the Skip button
-
-            // --- STEP 1: PREPARE AND SHOW TEXT/CLOCK ---
-            updateClock(newClockTime);
-
-            // Prepare next set of images
-            currentImageIndices = [];
-            imageElements.forEach(() => {
-                currentImageIndices.push(getNextShuffledImage());
-            });
-
-            // Reveal the word overlay
-            overlays.forEach((overlay) => {
-                const shuffledWord = getNextShuffledWord();
-                overlay.textContent = shuffledWord;
-                overlay.classList.add('show-text'); // TEXT SHOWS
-            });
-
-            showNotification(`Match "${overlays[0].textContent}" with ${newClockTime}`, 2000);
-
-            // --- STEP 2: TIMEOUT FOR IMAGE LOAD START ---
             setTimeout(() => {
-                // Hide the word overlay
-                overlays.forEach(overlay => {
-                    overlay.classList.remove('show-text'); // TEXT HIDES
-                });
-
-                // Start image loading (this is asynchronous) and square removal
-                startSquareRemovalInterval();
-
-                imageElements.forEach((img, index) => {
-                    const newIndex = currentImageIndices[index];
-                    const newImagePath = `images/${newIndex}.png`;
-                    changeImage(img, newImagePath); // Triggers load and later handleImageLoad
-                });
-
-            }, textDisplayDuration);
-        });
-
-        // === Special Button (Back to Ready) Logic (CORRECTED) ===
-        specialButton.addEventListener('click', function() {
-            // Check if we are already showing the special image (index 0)
-            const isReadyState = currentImageIndices.length === 1 && currentImageIndices[0] === 0;
-            if (isReadyState) {
-                showNotification("Already in ready state!");
-                return;
-            }
-
-            setButtonLoading(specialButton, true);
-
-            updateClock(READY_CLOCK_TIME);
-            revealAndStopSquares(); // FULLY REVEAL the image for the ready state
-
-            // --- NEW/ADJUSTED CODE FOR PAUSE STATE RESET ---
-            isChallengeActive = false; // End the challenge state
-            isPaused = false; // Reset pause state
-            pauseContinueButton.style.display = 'none'; // Hide the button
-            skipButton.style.display = 'none'; // <== ADDED: Hide the Skip button
-            // ---------------------------------------------
-
-            imagesWrapper.querySelectorAll('.image-overlay-text').forEach(overlay => {
                 overlay.classList.remove('show-text');
-            });
-
-            const imageElements = imagesWrapper.querySelectorAll('.flashcard-image');
-            imageElements.forEach((img) => {
-                // Force all images to index 0 (the special image)
-                // Note: For a single image, this is fine. For multiple, you'd reset the array.
-                changeImage(img, SPECIAL_IMAGE_PATH);
-            });
-
-            // Manually set the state back to ready (index 0)
-            currentImageIndices = [0];
-
-            showNotification("Reset to ready state!");
+                const randIdx = Math.floor(Math.random() * TOTAL_IMAGES) + 1;
+                img.src = `images/${randIdx}.png`;
+                clearInterval(squareRemovalInterval);
+                squareRemovalInterval = setInterval(removeSquaresGradually, 1000);
+            }, 1000);
         });
-        // === Skip Button Logic (Fast-forward to 0 squares) ===
-        skipButton.addEventListener('click', function() {
-            if (!isChallengeActive) {
-                showNotification("No active challenge to skip!");
-                return; // Only work during a challenge
-            }
 
-            // 1. Fully reveal squares and stop the interval
-            revealAndStopSquares();
-
-            // 2. Update status/notification
-            updateClockStatus('Challenge skipped - Image revealed', 'fa-check-circle');
-            showNotification("Challenge skipped! Picture fully revealed.");
-
-            // 3. Update challenge state and hide action buttons
+        skipButton.addEventListener('click', () => {
+            clearInterval(squareRemovalInterval);
+            Array.from(document.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
+            remainingSquares = 0;
+            squaresRemoved = TOTAL_SQUARES;
+            updateSquareCounter();
             isChallengeActive = false;
-            isPaused = false;
             pauseContinueButton.style.display = 'none';
             skipButton.style.display = 'none';
         });
+
+        specialButton.addEventListener('click', () => {
+            location.reload();
+        });
+
+        // Initialize
+        const container = document.createElement('div');
+        container.className = 'image-container';
+        const img = document.createElement('img');
+        img.id = 'myImage_0';
+        img.className = 'flashcard-image';
+        img.src = SPECIAL_IMAGE_PATH;
+        const overlay = document.createElement('div');
+        overlay.id = 'overlay_0';
+        overlay.className = 'image-overlay-text';
+        
+        container.appendChild(img);
+        container.appendChild(createSquareGrid());
+        container.appendChild(overlay);
+        imagesWrapper.appendChild(container);
+        
+        // Start revealed
+        setTimeout(() => {
+            Array.from(document.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
+            updateSquareCounter();
+        }, 100);
     </script>
 </body>
 </html>
+
+  
