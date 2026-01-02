@@ -206,115 +206,128 @@
     </div>
 
     <script>
-        const grid = document.getElementById('square-grid');
-        const img = document.getElementById('display-image');
-        const startBtn = document.getElementById('randomImageButton');
-        const pauseBtn = document.getElementById('pauseContinueButton');
-        const skipBtn = document.getElementById('skipButton');
-        const progBar = document.getElementById('progress-bar');
-        const progCont = document.getElementById('progress-container');
-        const counter = document.getElementById('square-counter');
+        
+    const grid = document.getElementById('square-grid');
+    const img = document.getElementById('display-image');
+    const startBtn = document.getElementById('randomImageButton');
+    const pauseBtn = document.getElementById('pauseContinueButton');
+    const skipBtn = document.getElementById('skipButton');
+    const progBar = document.getElementById('progress-bar');
+    const progCont = document.getElementById('progress-container');
+    const counter = document.getElementById('square-counter');
 
-        const TOTAL_SQUARES = 900;
-        let remaining = TOTAL_SQUARES;
-        let interval = null;
-        let isPaused = false;
+    const TOTAL_SQUARES = 900;
+    let remaining = TOTAL_SQUARES;
+    let interval = null;
+    let isPaused = false;
 
-        // Generate Squares
-        for (let i = 0; i < TOTAL_SQUARES; i++) {
-            const sq = document.createElement('div');
-            sq.className = 'square-block';
-            grid.appendChild(sq);
-        }
+    // Generate Squares
+    for (let i = 0; i < TOTAL_SQUARES; i++) {
+        const sq = document.createElement('div');
+        sq.className = 'square-block';
+        grid.appendChild(sq);
+    }
 
-        function updateUI() {
-            counter.textContent = `${remaining}/${TOTAL_SQUARES}`;
-            progBar.style.width = `${((TOTAL_SQUARES - remaining) / TOTAL_SQUARES) * 100}%`;
-        }
+    function updateUI() {
+        // Ensure counter never goes below 0
+        const displayCount = Math.max(0, remaining);
+        counter.textContent = `${displayCount}/${TOTAL_SQUARES}`;
+        progBar.style.width = `${((TOTAL_SQUARES - displayCount) / TOTAL_SQUARES) * 100}%`;
+    }
 
-        function removeSquares() {
-            const visible = Array.from(grid.querySelectorAll('.square-block')).filter(s => s.style.opacity !== '0');
-            if (visible.length === 0) {
-                clearInterval(interval);
-                pauseBtn.style.display = 'none';
-                skipBtn.style.display = 'none';
-                return;
-            }
-
-            const batch = Math.min(15, visible.length);
-            for (let i = 0; i < batch; i++) {
-                const target = visible[Math.floor(Math.random() * visible.length)];
-                target.classList.add('removing');
-                target.style.opacity = '0';
-                remaining--;
-            }
-            updateUI();
-        }
-
-        startBtn.addEventListener('click', () => {
-            // 1. Set Button to Loading
-            startBtn.disabled = true;
-            startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Loading...</span>';
-            
-            // 2. Prepare visual state (Cover image with purple)
+    function removeSquares() {
+        // Get only squares that are still visible (opacity is not 0)
+        let visible = Array.from(grid.querySelectorAll('.square-block')).filter(s => s.style.opacity !== '0');
+        
+        if (visible.length === 0) {
             clearInterval(interval);
-            remaining = TOTAL_SQUARES;
-            Array.from(grid.querySelectorAll('.square-block')).forEach(s => {
-                s.style.opacity = '1';
-                s.classList.remove('removing');
-            });
-            updateUI();
-
-            // 3. Buffer delay (stays purple while loading)
-            setTimeout(() => {
-                const randImg = Math.floor(Math.random() * 7) + 1;
-                img.src = `images/${randImg}.png`;
-                
-                // Reset Button
-                startBtn.disabled = false;
-                startBtn.innerHTML = '<i class="fas fa-play"></i> <span>Start Challenge</span>';
-                
-                // Show game controls
-                progCont.style.display = 'block';
-                pauseBtn.style.display = 'flex';
-                skipBtn.style.display = 'flex';
-                
-                // Start removing squares
-                interval = setInterval(removeSquares, 1000);
-            }, 1200); // 1.2 second "Loading" buffer
-        });
-
-        pauseBtn.addEventListener('click', () => {
-            isPaused = !isPaused;
-            if (isPaused) {
-                clearInterval(interval);
-                pauseBtn.innerHTML = '<i class="fas fa-play"></i> <span>Continue</span>';
-            } else {
-                interval = setInterval(removeSquares, 1000);
-                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
-            }
-        });
-
-        skipBtn.addEventListener('click', () => {
-            clearInterval(interval);
-            Array.from(grid.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
             remaining = 0;
             updateUI();
             pauseBtn.style.display = 'none';
             skipBtn.style.display = 'none';
-        });
+            return;
+        }
 
-        document.getElementById('specialImageButton').addEventListener('click', () => {
-            location.reload();
-        });
+        // Shuffle the visible squares to pick unique ones
+        visible.sort(() => Math.random() - 0.5);
 
-        // Initialize: Start with image revealed
-        window.onload = () => {
-            Array.from(grid.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
-            remaining = 0;
-            updateUI();
-        };
-    </script>
+        // Pick up to 15 unique squares from the shuffled list
+        const batchSize = Math.min(15, visible.length);
+        for (let i = 0; i < batchSize; i++) {
+            const target = visible[i];
+            target.classList.add('removing');
+            target.style.opacity = '0';
+            remaining--;
+        }
+        updateUI();
+    }
+
+    startBtn.addEventListener('click', () => {
+        startBtn.disabled = true;
+        startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Loading...</span>';
+        
+        clearInterval(interval);
+        remaining = TOTAL_SQUARES;
+        
+        // Reset all squares to visible
+        Array.from(grid.querySelectorAll('.square-block')).forEach(s => {
+            s.style.opacity = '1';
+            s.classList.remove('removing');
+        });
+        updateUI();
+
+        setTimeout(() => {
+            const randImg = Math.floor(Math.random() * 7) + 1;
+            img.src = `images/${randImg}.png`;
+            
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> <span>Start Challenge</span>';
+            
+            progCont.style.display = 'block';
+            pauseBtn.style.display = 'flex';
+            skipBtn.style.display = 'flex';
+            
+            isPaused = false;
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
+            
+            interval = setInterval(removeSquares, 1000);
+        }, 1200); 
+    });
+
+    pauseBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        if (isPaused) {
+            clearInterval(interval);
+            pauseBtn.innerHTML = '<i class="fas fa-play"></i> <span>Continue</span>';
+        } else {
+            interval = setInterval(removeSquares, 1000);
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
+        }
+    });
+
+    skipBtn.addEventListener('click', () => {
+        clearInterval(interval);
+        Array.from(grid.querySelectorAll('.square-block')).forEach(s => {
+            s.style.opacity = '0';
+            s.classList.remove('removing');
+        });
+        remaining = 0;
+        updateUI();
+        pauseBtn.style.display = 'none';
+        skipBtn.style.display = 'none';
+    });
+
+    document.getElementById('specialImageButton').addEventListener('click', () => {
+        location.reload();
+    });
+
+    // Start with image revealed on first page load
+    window.onload = () => {
+        Array.from(grid.querySelectorAll('.square-block')).forEach(s => s.style.opacity = '0');
+        remaining = 0;
+        updateUI();
+    };
+</script>
 </body>
 </html>
 
