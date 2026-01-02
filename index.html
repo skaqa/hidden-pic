@@ -60,7 +60,7 @@
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 1100px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -82,7 +82,7 @@
             font-family: 'Nunito', sans-serif;
             font-size: 3rem;
             font-weight: 800;
-            background: linear-gradient(90deg, var(--primary-blue), var(--accent-purple));
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-purple)),url('images/background.png');
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
@@ -239,9 +239,11 @@
         }
 
         .action-button {
-            padding: 16px 32px;
-            font-size: 1.1rem;
+            padding: 16px 20px;
+            font-size: 1.0rem;
             font-weight: 600;
+            white-space: nowrap;
+            flex: 1;
             cursor: pointer;
             border: none;
             border-radius: 12px;
@@ -251,6 +253,7 @@
             gap: 12px;
             color: white;
             min-width: 200px;
+            max-width: 250px;
             justify-content: center;
             box-shadow: var(--shadow-md);
             position: relative;
@@ -523,13 +526,7 @@
         
         // Sample images from Unsplash (free to use)
         const sampleImages = [
-            'https://images.unsplash.com/photo-1579546929662-711aa81148cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1505142468610-359e7d316be0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+             'images/1.png', 'images/2.png', 'images/3.png','images/4.png', 'images/5.png', 'images/6.png', 'images/7.png'
         ];
 
         // Initialize the game
@@ -543,7 +540,7 @@
             }
             
             // Set initial image
-            img.src = sampleImages[0];
+            img.src = 'images/0.png';
             
             // Update UI
             updateUI();
