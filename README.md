@@ -1,3 +1,4 @@
+replace images/ folder
 Step 1: Open Git Bash and navigate to your project
 cd /path/to/your/project
 
