@@ -645,62 +645,78 @@
             updateUI();
         }
 
-        // Start the game
         function startGame() {
-            clearAllAnimations();
+    // 1. Safety check
+    if (sampleImages.length === 0) {
+        alert("Please upload some images first!");
+        return;
+    }
+
+    // 2. Clean up any previous game state/animations
+    clearAllAnimations();
+    
+    // 3. Rebuild the grid (This replaces the manual loop you had)
+    initGrid();
+    
+    // 4. Reset variables
+    remaining = TOTAL_SQUARES;
+    secondsElapsed = 0;
+
+    // 5. Pick the next image
+    const randomIndex = Math.floor(Math.random() * sampleImages.length);
+    const selectedSrc = sampleImages[randomIndex];
+
+    // 6. UI POLISH (The parts that were missing):
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Loading...</span>';
+    startBtn.classList.remove('pulse'); // Remove the glowing effect
+    
+    // Ensure these are visible/hidden correctly
+    if (progCont) progCont.style.display = 'block'; 
+    if (instructions) instructions.style.display = 'none'; 
+
+    // 7. SMART PRELOAD: Wait for the image to actually be ready
+    const tempImg = new Image();
+    tempImg.src = selectedSrc;
+
+    tempImg.decode().then(() => {
+        // IMAGE IS READY - NOW START THE GAME
+        img.src = selectedSrc;
+        imagesCount++; // Increment count only when image successfully loads
+        
+        pauseBtn.style.display = 'flex';
+        skipBtn.style.display = 'flex';
+
+        // Buffer delay for smooth transition
+        const startTimeout = setTimeout(() => {
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-sync"></i> <span>New Challenge</span>';
             
-            remaining = TOTAL_SQUARES;
-            secondsElapsed = 0;
+            isPaused = false;
+            gameActive = true;
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
             
-            // Re-build grid to ensure clean state
-            grid.innerHTML = '';
-            for (let i = 0; i < TOTAL_SQUARES; i++) {
-                const sq = document.createElement('div');
-                sq.className = 'square-block';
-                grid.appendChild(sq);
-            }
+            // Start the reveal interval
+            interval = setInterval(removeSquares, 600);
             
-            // Select a random image
-            const randomIndex = Math.floor(Math.random() * sampleImages.length);
-            img.src = sampleImages[randomIndex];
-            imagesCount++;
+            // Start the timer
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    secondsElapsed++;
+                    updateUI();
+                }
+            }, 1000);
             
-            // Update button states
-            startBtn.disabled = true;
-            startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Loading...</span>';
-            startBtn.classList.remove('pulse');
-            
-            // Show game controls
-            pauseBtn.style.display = 'flex';
-            skipBtn.style.display = 'flex';
-            progCont.style.display = 'block';
-            
-            // Hide instructions
-            instructions.style.display = 'none';
-            
-            // Start the game after a short delay
-            setTimeout(() => {
-                startBtn.disabled = false;
-                startBtn.innerHTML = '<i class="fas fa-play-circle"></i> <span>New Challenge</span>';
-                
-                isPaused = false;
-                gameActive = true;
-                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> <span>Pause</span>';
-                
-                // Start removing squares
-                interval = setInterval(removeSquares, 800);
-                
-                // Start timer
-                timerInterval = setInterval(() => {
-                    if (!isPaused) {
-                        secondsElapsed++;
-                        updateUI();
-                    }
-                }, 1000);
-                
-                updateUI();
-            }, 800);
-        }
+            updateUI();
+        }, 500);
+        
+        revealTimeouts.push(startTimeout);
+    }).catch((err) => {
+        console.error("Image loading failed", err);
+        startBtn.disabled = false;
+        startBtn.innerHTML = 'Error Loading Image';
+    });
+}
 
         // Pause or continue the game
         function togglePause() {
