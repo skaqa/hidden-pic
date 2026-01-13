@@ -155,12 +155,12 @@
         }
 
         .square-block {
-            width: 5%;
-            height: 5%;
+            width: calc(100% / 30);
+            height: calc(100% / 30);
             background-color: var(--accent-purple);
             transition: opacity 0.4s ease-out, transform 0.4s ease-out;
             opacity: 1;
-            border: 0.5px solid rgba(255, 255, 255, 0.2);
+            border: 0.1px solid rgba(255, 255, 255, 0.1);;
         }
 
         .square-block.removing {
@@ -534,6 +534,7 @@
         let remaining = TOTAL_SQUARES;
         let interval = null;
         let timerInterval = null;
+        let revealTimeouts = [];
         let isPaused = false;
         let gameActive = false;
         let secondsElapsed = 0;
@@ -565,6 +566,13 @@
                 instructions.style.display = 'block';
                 instructions.classList.add('fade-in');
             }, 1000);
+        }
+        
+        function clearAllAnimations() {
+            clearInterval(interval);
+            clearInterval(timerInterval);
+            revealTimeouts.forEach(t => clearTimeout(t));
+            revealTimeouts = [];
         }
 
         // Update all UI elements
@@ -626,19 +634,18 @@
 
         // Start the game
         function startGame() {
-            if (gameActive) return;
+            clearAllAnimations();
             
-            // Reset game state
-            clearInterval(interval);
-            clearInterval(timerInterval);
             remaining = TOTAL_SQUARES;
             secondsElapsed = 0;
             
-            // Reset all squares to visible
-            Array.from(grid.querySelectorAll('.square-block')).forEach(s => {
-                s.style.opacity = '1';
-                s.classList.remove('removing');
-            });
+            // Re-build grid to ensure clean state
+            grid.innerHTML = '';
+            for (let i = 0; i < TOTAL_SQUARES; i++) {
+                const sq = document.createElement('div');
+                sq.className = 'square-block';
+                grid.appendChild(sq);
+            }
             
             // Select a random image
             const randomIndex = Math.floor(Math.random() * sampleImages.length);
@@ -699,14 +706,17 @@
         function skipToReveal() {
             clearInterval(interval);
             
-            // Animate all squares disappearing
-            Array.from(grid.querySelectorAll('.square-block')).forEach((s, index) => {
-                setTimeout(() => {
+            const blocks = Array.from(grid.querySelectorAll('.square-block:not(.removing)'));
+            blocks.forEach((s, index) => {
+                // Store timeout IDs so they can be cleared if user clicks "New Challenge" mid-reveal
+                const t = setTimeout(() => {
                     s.classList.add('removing');
-                    setTimeout(() => {
+                    const t2 = setTimeout(() => {
                         s.style.opacity = '0';
                     }, 100);
-                }, index * 10);
+                    revealTimeouts.push(t2);
+                }, index * 2); // Faster reveal for 900 squares
+                revealTimeouts.push(t);
             });
             
             remaining = 0;
