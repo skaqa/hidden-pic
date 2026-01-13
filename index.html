@@ -317,6 +317,16 @@
             background: linear-gradient(135deg, var(--accent-teal), #21867a);
         }
 
+        .footer-tools {
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+
         .timer-display {
             font-size: 1.2rem;
             font-weight: 600;
@@ -480,11 +490,6 @@
             </div>
 
             <div class="buttons-panel">
-                <label class="action-button" style="background: #6c757d; cursor: pointer;">
-                    <i class="fas fa-upload"></i> <span>Upload Temporary Pics</span>
-                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
-                </label>
-  
                 <button id="randomImageButton" class="action-button pulse">
                     <i class="fas fa-play-circle"></i> <span>Start Challenge</span>
                 </button>
@@ -499,7 +504,15 @@
                 </button>
             </div>
         </div>
-
+        
+        <div class="footer-tools">
+            <label class="upload-label">
+                <i class="fas fa-upload"></i> <span>Upload Your Own Images</span>
+                <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;">
+            </label>
+        </div>
+        
+    </div>
         <div class="instructions" id="instructions">
             <h3>How to Play:</h3>
             <ul>
