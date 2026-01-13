@@ -552,7 +552,18 @@
         let gameActive = false;
         let secondsElapsed = 0;
         let imagesCount = 0;
-        
+        let sampleImages = [];
+
+        function initGrid() {
+            if (!grid) return;
+            grid.innerHTML = '';
+            for (let i = 0; i < TOTAL_SQUARES; i++) {
+                const sq = document.createElement('div');
+                sq.className = 'square-block';
+                grid.appendChild(sq);
+            }
+        }
+              
         // Sample images from Unsplash (free to use)
         const sampleImages = [
              'images/1.png', 'images/2.png', 'images/3.png','images/4.png', 'images/5.png', 'images/6.png', 'images/7.png'
